@@ -45,11 +45,61 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 > The code for training can be found in `v1_train.py`.
 
-The hyperparameters used for training can be found in `v1_train.py`. Any changes to those values in the following runs are noted below.
+Below are the different training runs of this model (with different hyperparameter values) to explore the hyperparameter values affects the accuracy of the trained model. The training was stopped before the full 200 epochs (but once convergence was somewhat achieved) due to time constraints. The full list of runs can be found in `v1_runs.txt`.
 
 #### Run 1
 
-![Model Accuracy](plots/1506156971-Accuracy.png)
+Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.5, L2: 0.0
+
+![](plots/1506156971-Accuracy.png)
+
+Maximum Test Accuracy: 75.80%
+
+Since test accuracy is significantly below training accuracy, it suggests that the model is overfitting the training data. This could be because the dataset is too small, stronger regularization is needed or fewer model parameters are needed.
+
+#### Runs 2 - 7
+
+Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, L2: 0.0
+
+**Dropout: 0.3**
+
+![](plots/1506762981-Accuracy.png)
+
+Maximum Test Accuracy: 73.08%.
+
+Surprisingly, a decreased dropout keep probability (i.e. increased dropout rate) leads to a slightly less accurate model. Perhaps the dropout was increased by too much?
+
+**Dropout: 0.4**
+
+![](plots/1506784601-Accuracy.png)
+
+Maximum Test Accuracy: 74.11%.
+
+Slight increase in accuracy as the dropout rate is decreased, which suggests that a dropout of 0.3 was resulting in under-learning by the network. However, this model is still less accurate than the one trained with a dropout rate of 0.5.
+
+**Dropout: 0.1**
+
+![](plots/1506787497-Accuracy.png)
+
+Maximum Test Accuracy: 74.67%
+
+I tried an extremely high dropout rate to validate my under-learning concern. It seems like dropout rates below 0.5 do tend to affect the ability of the network to learn properly.
+
+**Dropout: 0.6**
+
+![](plots/1506786386-Accuracy.png)
+
+Maximum Test Accuracy: 74.77%
+
+I tried decreasing the dropout rate from 0.5 to check if that value was causing the network to under-learn too but it actually results in a slightly lower accuracy, suggesting overfitting of the training data.
+
+**Dropout: 0.9**
+
+![](plots/1506789552-Accuracy.png)
+
+Maximum Test Accuracy: 72.70%
+
+An extremely low dropout rate tends to overfit the training data too.
 
 ## References
 
@@ -57,3 +107,4 @@ The hyperparameters used for training can be found in `v1_train.py`. Any changes
 - https://github.com/yoonkim/CNN_sentence
 - [Implementing a CNN for Text Classification - Denny Britz](http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/)
 - https://github.com/dennybritz/cnn-text-classification-tf
+

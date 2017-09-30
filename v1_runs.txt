@@ -1,0 +1,16 @@
+v1 Runs
+------------------------
+
+1. ID: 1506156971. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.5, L2: 0.0. 75.80%.
+
+2. ID: 1506762981. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.3, L2: 0.0. 73.08%.
+
+3. ID: 1506764653. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.5, L2: 0.0. 75.33%.
+
+4. ID: 1506784601. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.4, L2: 0.0. 74.11%.
+
+5. ID: 1506786386. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.6, L2: 0.0. 74.77%.
+
+6. ID: 1506787497. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.1, L2: 0.0. 74.67%.
+
+7. ID: 1506789552. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.9, L2: 0.0. 72.70%.
