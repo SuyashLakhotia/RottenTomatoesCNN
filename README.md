@@ -47,7 +47,7 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 Below are the different training runs of this model with different hyperparameter values to explore their effect on the accuracy of the trained model. In most of the runs, the training was stopped before the full 200 epochs (but once convergence was somewhat achieved) due to time constraints. The full list of runs can be found in `v1_runs.txt`.
 
-### Run 1
+### Initial Run
 
 Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.5, L2: 0.0
 
@@ -57,7 +57,7 @@ Maximum Test Accuracy: 75.80%
 
 Since test accuracy is significantly below training accuracy, it suggests that the model is overfitting the training data. This could be because the dataset is too small, regularization is too weak or there are too many model parameters.
 
-### Runs 2 - 7
+### Dropout
 
 Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, L2: 0.0
 
