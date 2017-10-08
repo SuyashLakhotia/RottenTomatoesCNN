@@ -161,9 +161,13 @@ with tf.Graph().as_default():
             print("{}: Step {}, Loss {:g}, Accuracy {:g}".format(time_str, step, loss, accuracy))
             if writer:
                 writer.add_summary(summaries, step)
+            return accuracy
 
         # Generate batches
         batches = data.batch_iter(list(zip(x_train, y_train)), batch_size, num_epochs)
+
+        # Maximum test accuracy
+        max_accuracy = 0
 
         # Training loop
         for batch in batches:
@@ -172,7 +176,10 @@ with tf.Graph().as_default():
             current_step = tf.train.global_step(sess, global_step)
             if current_step % evaluate_every == 0:
                 print("\nEvaluation:")
-                test_step(x_test, y_test, writer=test_summary_writer)
+                accuracy = test_step(x_test, y_test, writer=test_summary_writer)
+                if accuracy > max_accuracy:
+                    max_accuracy = accuracy
+                print("Max. Test Accuracy: {:g}".format(max_accuracy))
                 print("")
             if current_step % checkpoint_every == 0:
                 path = saver.save(sess, checkpoint_prefix, global_step=current_step)
