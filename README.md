@@ -47,6 +47,8 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 Below are the different training runs of this model with different hyperparameter values to explore their effect on the accuracy of the trained model. In most of the runs, the training was stopped before the full 200 epochs (but once convergence was somewhat achieved) due to time constraints. The full list of runs can be found in `v1_runs.txt`.
 
+> **NOTE:** The hyperparameter tuning performed below is very crude and does not use cross-validation or multiple experiments. It was just done to make sure there were no drastic changes in model performance with different hyperparameter values.
+
 ### Initial Run
 
 Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.5, L2: 0.0
@@ -100,6 +102,30 @@ I tried decreasing the dropout rate from 0.5 to check if that value was also cau
 Maximum Test Accuracy: 72.70%
 
 An extremely low dropout rate seems to overfit the training data too.
+
+### L2 Regularization
+
+Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.5
+
+After finding the dropout rate to be somewhat optimal at 0.5, I experimented with the L2 regularization term.
+
+#### L2: 0.95
+
+![](plots/1507472715-Accuracy.png)
+
+Maximum Test Accuracy: 75.61%
+
+#### L2: 0.50
+
+![](plots/1507483644-Accuracy.png)
+
+Maximum Test Accuracy: 73.64%
+
+#### L2: 0.15
+
+![](plots/1507480217-Accuracy.png)
+
+Maximum Test Accuracy: 75.52%
 
 # References
 

@@ -14,3 +14,11 @@ v1 Runs
 6. ID: 1506787497. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.1, L2: 0.0. 74.67%.
 
 7. ID: 1506789552. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.9, L2: 0.0. 72.70%.
+
+8. ID: 1507472715. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.5, L2: 0.95. 75.61%.
+
+9. ID: 1507480217. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.5, L2: 0.15. 75.52%.
+
+10. ID: 1507482087. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.5, L2: 0.0. 74.58%.
+
+11. ID: 1507483644. Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.5, L2: 0.5. 73.64%.
