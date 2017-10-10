@@ -17,7 +17,7 @@ positive_data_file = "data/rt-polarity.pos"
 negative_data_file = "data/rt-polarity.neg"
 
 # Model hyperparameters
-embedding_dim = 128  # dimensionality of character embedding
+embedding_dim = 128  # dimensionality of embedding
 filter_sizes = "3,4,5"  # comma-separated filter sizes
 num_filters = 128  # number of filters per filter size
 dropout_keep_prob = 0.5  # dropout keep probability
@@ -67,19 +67,17 @@ print("Train/Test Split: %d/%d" % (len(y_train), len(y_test)))
 # ==================================================
 
 with tf.Graph().as_default():
-    session_conf = tf.ConfigProto(
-        allow_soft_placement=allow_soft_placement,
-        log_device_placement=log_device_placement)
+    session_conf = tf.ConfigProto(allow_soft_placement=allow_soft_placement,
+                                  log_device_placement=log_device_placement)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
-        cnn = TextCNN(
-            sequence_length=x_train.shape[1],
-            num_classes=y_train.shape[1],
-            vocab_size=len(vocab_processor.vocabulary_),
-            embedding_size=embedding_dim,
-            filter_sizes=list(map(int, filter_sizes.split(","))),
-            num_filters=num_filters,
-            l2_reg_lambda=l2_reg_lambda)
+        cnn = TextCNN(sequence_length=x_train.shape[1],
+                      num_classes=y_train.shape[1],
+                      vocab_size=len(vocab_processor.vocabulary_),
+                      embedding_size=embedding_dim,
+                      filter_sizes=list(map(int, filter_sizes.split(","))),
+                      num_filters=num_filters,
+                      l2_reg_lambda=l2_reg_lambda)
 
         # Define training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
@@ -99,7 +97,7 @@ with tf.Graph().as_default():
 
         # Output directory for models and summaries
         timestamp = str(int(time.time()))
-        out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
+        out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", "v1", timestamp))
         print("Writing to {}\n".format(out_dir))
 
         # Summaries for loss and accuracy
@@ -138,9 +136,9 @@ with tf.Graph().as_default():
                 cnn.input_y: y_batch,
                 cnn.dropout_keep_prob: dropout_keep_prob
             }
-            _, step, summaries, loss, accuracy = sess.run(
-                [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
-                feed_dict)
+            _, step, summaries, loss, accuracy = sess.run([train_op, global_step, train_summary_op, cnn.loss,
+                                                           cnn.accuracy],
+                                                          feed_dict)
             time_str = datetime.datetime.now().isoformat()
             print("{}: Step {}, Loss {:g}, Accuracy {:g}".format(time_str, step, loss, accuracy))
             train_summary_writer.add_summary(summaries, step)
@@ -154,9 +152,9 @@ with tf.Graph().as_default():
                 cnn.input_y: y_batch,
                 cnn.dropout_keep_prob: 1.0
             }
-            step, summaries, loss, accuracy = sess.run(
-                [global_step, test_summary_op, cnn.loss, cnn.accuracy],
-                feed_dict)
+            step, summaries, loss, accuracy = sess.run([global_step, test_summary_op, cnn.loss,
+                                                        cnn.accuracy],
+                                                       feed_dict)
             time_str = datetime.datetime.now().isoformat()
             print("{}: Step {}, Loss {:g}, Accuracy {:g}".format(time_str, step, loss, accuracy))
             if writer:
