@@ -4,7 +4,7 @@
 
 ## Dataset Description
 
-The dataset used are sentences from Pang and Lee's [movie review dataset](http://www.cs.cornell.edu/people/pabo/movie-review-data/) — `sentence polarity dataset v1.0`. There are 5,331 positive and 5,331 negative sentences, formed from a vocabulary size of ~20,000.
+The dataset used is Pang and Lee's movie review dataset (`sentence polarity dataset v1.0` from [here](http://www.cs.cornell.edu/people/pabo/movie-review-data/)), which consists of 5,331 positive and 5,331 negative sentences, formed from a vocabulary size of ~20,000.
 
 ### Preprocessing
 
@@ -12,10 +12,10 @@ The dataset used are sentences from Pang and Lee's [movie review dataset](http:/
 
 1. Load the data from the files inside `data/`.
 2. `.strip()` every sentence.
-3. Replace any characters that don't match ``[A-Za-z0-9(),!?\'\`]``.
-4. Insert a whitespace between a word and `'ve`, `'re` etc.
+3. Replace any characters that don't match ``[A-Za-z0-9(),!?\'\`]`` with a whitespace.
+4. Insert a whitespace between a word and a verb's contracted form (`'ve`, `'re`, etc.).
 5. Insert a whitespace before punctuation marks.
-6. Delete repeated whitespaces.
+6. Delete any repeated whitespaces.
 
 # Model v1
 
@@ -23,7 +23,7 @@ The dataset used are sentences from Pang and Lee's [movie review dataset](http:/
 
 ## Data Preparation
 
-The sentences from the dataset are fed into TensorFlow's `VocabularyProcessor` that builds a vocabulary index and maps each word to an integer between 0 and 18,757 (vocabulary size). Each sentence is padded with special padding tokens `<UNK>` (index of 0 in vocabulary) to fit the maximum sentence size of 56 words.
+The sentences from the dataset are fed into TensorFlow's `VocabularyProcessor`, which builds a vocabulary index and maps each word to an integer between 0 and 18,757 (vocabulary size). Each sentence is padded with special padding tokens `<UNK>` (index of 0 in vocabulary) to fit the maximum sentence size of 56 words.
 
 The data is shuffled and 10% of the dataset is used as the test set.
 
@@ -129,8 +129,8 @@ Maximum Test Accuracy: 75.52%
 
 # References
 
-- [Convolutional Neural Networks for Sentence Classification](https://arxiv.org/abs/1408.5882)
+- [Convolutional Neural Networks for Sentence Classification - Yoon Kim](https://arxiv.org/abs/1408.5882)
 - https://github.com/yoonkim/CNN_sentence
+- [A Sensitivity Analysis of (and Practitioners' Guide to) Convolutional Neural Networks for Sentence Classification - Ye Zhang & Bryon C. Wallace](https://arxiv.org/abs/1510.03820)
 - [Implementing a CNN for Text Classification - Denny Britz](http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/)
 - https://github.com/dennybritz/cnn-text-classification-tf
-
