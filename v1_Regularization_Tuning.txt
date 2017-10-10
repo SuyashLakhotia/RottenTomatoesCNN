@@ -1,0 +1,26 @@
+v1 Runs
+-----------------
+
+ID: 1506156971. Dropout Keep Probability: 0.5, L2: 0.0. 75.80%.
+
+ID: 1507482087. Dropout Keep Probability: 0.5, L2: 0.0. 74.58%.
+
+ID: 1507628197. Dropout Keep Probability: 0.5, L2: 0.0. 74.30%.
+
+ID: 1506764653. Dropout Keep Probability: 0.5, L2: 0.0. 75.33%.
+
+ID: 1506787497. Dropout Keep Probability: 0.1, L2: 0.0. 74.67%.
+
+ID: 1506762981. Dropout Keep Probability: 0.3, L2: 0.0. 73.08%.
+
+ID: 1506784601. Dropout Keep Probability: 0.4, L2: 0.0. 74.11%.
+
+ID: 1506786386. Dropout Keep Probability: 0.6, L2: 0.0. 74.77%.
+
+ID: 1506789552. Dropout Keep Probability: 0.9, L2: 0.0. 72.70%.
+
+ID: 1507472715. Dropout Keep Probability: 0.5, L2: 0.95. 75.61%.
+
+ID: 1507480217. Dropout Keep Probability: 0.5, L2: 0.15. 75.52%.
+
+ID: 1507483644. Dropout Keep Probability: 0.5, L2: 0.50. 73.64%.

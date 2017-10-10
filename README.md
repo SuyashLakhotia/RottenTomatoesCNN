@@ -41,91 +41,23 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 - `l2_reg_lambda`: L2 regularization term. Default is 0.
 - `dropout_keep_prob`: Probability of keeping a neuron in the dropout layer.
 
-## Accuracy of Model
+## Model Performance
 
 > The code for training can be found in `v1_train.py`.
 
-Below are the different training runs of this model with different hyperparameter values to explore their effect on the accuracy of the trained model. In most of the runs, the training was stopped before the full 200 epochs (but once convergence was somewhat achieved) due to time constraints. The full list of runs can be found in `v1_runs.txt`.
+![](plots/1507628197-Accuracy.png)
 
-> **NOTE:** The hyperparameter tuning performed below is very crude and does not use cross-validation or multiple experiments. It was just done to make sure there were no drastic changes in model performance with different hyperparameter values.
+**Embedding Dimensionality:** 128
+**Filter Sizes:** 3, 4, 5
+**Number of Filters:** 128
+**Dropout Keep Probability:** 0.5
+**L2:** 0.0
 
-### Initial Run
+**Maximum Test Accuracy:** 74.30%
 
-Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout Keep Probability: 0.5, L2: 0.0
+## Regularization Tuning
 
-![](plots/1506156971-Accuracy.png)
-
-Maximum Test Accuracy: 75.80%
-
-Since test accuracy is significantly below training accuracy, it suggests that the model is overfitting the training data. This could be because the dataset is too small, regularization is too weak or there are too many model parameters.
-
-### Dropout
-
-Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, L2: 0.0
-
-#### Dropout Keep Probability: 0.3
-
-![](plots/1506762981-Accuracy.png)
-
-Maximum Test Accuracy: 73.08%.
-
-Surprisingly, a decreased dropout keep probability (i.e. increased dropout rate) leads to a slightly less accurate model. Perhaps the dropout rate was increased by too much?
-
-#### Dropout Keep Probability: 0.4
-
-![](plots/1506784601-Accuracy.png)
-
-Maximum Test Accuracy: 74.11%.
-
-Slight increase in accuracy as the dropout rate is decreased, which suggests that a dropout keep probability of 0.3 was resulting in under-learning by the network. However, this model is still less accurate than the one trained with a dropout rate of 0.5.
-
-#### Dropout Keep Probability: 0.1
-
-![](plots/1506787497-Accuracy.png)
-
-Maximum Test Accuracy: 74.67%
-
-I tried an extremely high dropout rate to validate my under-learning concern. It seems like dropout keep probabilities below 0.5 do tend to affect the ability of the network to learn properly.
-
-#### Dropout Keep Probability: 0.6
-
-![](plots/1506786386-Accuracy.png)
-
-Maximum Test Accuracy: 74.77%
-
-I tried decreasing the dropout rate from 0.5 to check if that value was also causing the network to under-learn but it actually results in a slightly lower accuracy, suggesting overfitting of the training data.
-
-#### Dropout Keep Probability: 0.9
-
-![](plots/1506789552-Accuracy.png)
-
-Maximum Test Accuracy: 72.70%
-
-An extremely low dropout rate seems to overfit the training data too.
-
-### L2 Regularization
-
-Embedding Dimensionality: 128, Filter Sizes: 3, 4, 5, Number of Filters: 128, Dropout: 0.5
-
-After finding the dropout rate to be somewhat optimal at 0.5, I experimented with the L2 regularization term.
-
-#### L2: 0.95
-
-![](plots/1507472715-Accuracy.png)
-
-Maximum Test Accuracy: 75.61%
-
-#### L2: 0.50
-
-![](plots/1507483644-Accuracy.png)
-
-Maximum Test Accuracy: 73.64%
-
-#### L2: 0.15
-
-![](plots/1507480217-Accuracy.png)
-
-Maximum Test Accuracy: 75.52%
+Crude hyperparameter tuning was performed for the regularization terms to check for any drastic changes in model performance. The results are documented [here](v1_Regularization_Tuning.md).
 
 # References
 
