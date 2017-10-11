@@ -8,12 +8,12 @@ The dataset used is Pang and Lee's movie review dataset (`sentence polarity data
 
 ### Preprocessing
 
-> The data preprocessing code is available in `data.py` and is identical to the code used in [Kim's paper](https://arxiv.org/pdf/1408.5882.pdf).
+> The data preprocessing code is available in `data.py` and is identical to the code used in [Yoon Kim's paper](https://arxiv.org/pdf/1408.5882.pdf).
 
 1. Load the data from the files inside `data/`.
 2. `.strip()` every sentence.
 3. Replace any characters that don't match ``[A-Za-z0-9(),!?\'\`]`` with a whitespace.
-4. Insert a whitespace between a word and a verb's contracted form (`'ve`, `'re`, etc.).
+4. Insert a whitespace between a word and a verb's contracted form (`'ve`, `'re` etc.).
 5. Insert a whitespace before punctuation marks.
 6. Delete any repeated whitespaces.
 
@@ -41,6 +41,8 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 - `l2_reg_lambda`: L2 regularization term. Default is 0.
 - `dropout_keep_prob`: Probability of keeping a neuron in the dropout layer.
 
+> **NOTE:** Does not include training parameters like learning rate, batch size etc.
+
 ## Model Performance
 
 > The code for training can be found in `v1_train.py`.
@@ -55,7 +57,7 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 **Maximum Test Accuracy:** 74.30%
 
-## Regularization Tuning
+## Crude Regularization Tuning
 
 Crude hyperparameter tuning was performed for the regularization terms to check for any drastic changes in model performance. The results are documented [here](v1_Regularization_Tuning.md).
 

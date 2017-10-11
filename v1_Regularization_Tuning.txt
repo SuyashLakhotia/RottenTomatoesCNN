@@ -1,5 +1,5 @@
-v1 Runs
------------------
+v1 Regularization Tuning
+-------------------------------------
 
 ID: 1506156971. Dropout Keep Probability: 0.5, L2: 0.0. 75.80%.
 
@@ -21,6 +21,6 @@ ID: 1506789552. Dropout Keep Probability: 0.9, L2: 0.0. 72.70%.
 
 ID: 1507472715. Dropout Keep Probability: 0.5, L2: 0.95. 75.61%.
 
-ID: 1507480217. Dropout Keep Probability: 0.5, L2: 0.15. 75.52%.
-
 ID: 1507483644. Dropout Keep Probability: 0.5, L2: 0.50. 73.64%.
+
+ID: 1507480217. Dropout Keep Probability: 0.5, L2: 0.15. 75.52%.

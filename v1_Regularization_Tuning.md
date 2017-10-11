@@ -1,8 +1,8 @@
 # Model v1 - Crude Regularization Tuning
 
-Below are the different training runs of the model with different hyperparameter values for regularization. In most of the runs, the training was stopped before the full 200 epochs but once convergence was somewhat achieved (checked visually using TensorBoard) due to time constraints. The full list of runs can be found in `v1_runs.txt`.
+Below are the details of training runs performed with different regularization values. In most of the runs, the training was stopped before the full 200 epochs but once convergence was somewhat achieved (checked visually using TensorBoard) due to time constraints. The full list of runs can be found in `v1_Regularization_Tuning.txt`.
 
-> **NOTE:** The hyperparameter tuning performed below is very crude and does not use cross-validation or multiple experiments (there is some amount of variance with multiple training runs of the same model). It was just done to make sure there were no drastic changes in model performance with different values for regularization.
+> **NOTE:** The hyperparameter tuning performed below is very crude and does not use cross-validation (just a simple 10% dev set) or multiple experiments (there is some amount of variance with multiple training runs of the same model). It was just done to make sure there were no drastic changes in model performance.
 
 ## Initial Run
 
