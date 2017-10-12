@@ -49,11 +49,11 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 ![](plots/1507628197-Accuracy.png)
 
-**Embedding Dimensionality:** 128
-**Filter Sizes:** 3, 4, 5
-**Number of Filters:** 128
-**Dropout Keep Probability:** 0.5
-**L2:** 0.0
+- **Embedding Dimensionality:** 128
+- **Filter Sizes:** 3, 4, 5
+- **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
+- **L2:** 0.0
 
 **Maximum Test Accuracy:** 74.30%
 
@@ -81,11 +81,11 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 
 ![](plots/1507798871-Accuracy.png)
 
-**Embedding Dimensionality:** 128
-**Filter Sizes:** 3, 4, 5
-**Number of Filters:** 128
-**Dropout Keep Probability:** 0.5
-**L2:** 0.0
+- **Embedding Dimensionality:** 128
+- **Filter Sizes:** 3, 4, 5
+- **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
+- **L2:** 0.0
 
 **Maximum Test Accuracy:** 79.00%
 
