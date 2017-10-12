@@ -71,7 +71,7 @@ The dataset is prepared in the exact same way as Model v1 (above).
 
 > The code for the model can be found in `v2_model.py`.
 
-This model is almost identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`, trained on a corpus of ~100 billion words from Google News) instead of learning the embeddings from the dataset. The embeddings of the 2,310 words not present in `word2vec` are initialized randomly and all embeddings are kept static during training.
+This model is almost identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`, which contains vectors for 3 million words and phrases trained on a corpus of ~100 billion words from Google News) instead of learning the embeddings from the dataset. The embeddings of the 2,310 words not present in `word2vec` are initialized randomly and all embeddings are kept static during training.
 
 The details of these pre-trained embeddings can be found [here](https://code.google.com/archive/p/word2vec/) and the actual file can be downloaded [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit). The embeddings are processed in `v2_train.py`.
 
@@ -87,9 +87,27 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 - **Dropout Keep Probability:** 0.5
 - **L2:** 0.0
 
-**Maximum Test Accuracy:** 79.00%
+**Maximum Test Accuracy:** 79.00% <!-- 0.789869 -->
 
 This model performed better than Model v1 (~5% increase in accuracy), which suggests that learning the word embeddings from the relatively smaller movie review dataset is not ideal.
+
+# Model v2.1
+
+This model is almost identical to Model v2, except that the word embeddings are initialized with the pre-trained vectors but also fine-tuned (i.e. learned) during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `v2_model.py`.
+
+## Model Performance
+
+![](plots/1507803080-Accuracy.png)
+
+- **Embedding Dimensionality:** 128
+- **Filter Sizes:** 3, 4, 5
+- **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
+- **L2:** 0.0
+
+**Maximum Test Accuracy:** 80.21% <!-- 0.802064 -->
+
+There is only a slight increase in accuracy, however, an interesting observation is that the model is more prone to overfitting when learning the embeddings (training accuracy is almost consistently 100% towards the end) as opposed to Model v2, which never *consistently* had a 100% training accuracy.
 
 # References
 
