@@ -1,6 +1,8 @@
-__pycache__/
-runs/
 ENV/
+__pycache__/
+
+runs/
+data/GoogleNews-vectors-negative300.bin
 
 TODO
 NOTES
