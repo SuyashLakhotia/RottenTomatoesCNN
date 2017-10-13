@@ -20,10 +20,10 @@ class TextCNN(object):
 
         # Embedding layer
         with tf.device('/cpu:0'), tf.name_scope("embedding"):
-            self.W = tf.Variable(embeddings,
-                                 trainable=True,
-                                 name="W")  # embedding matrix
-            self.embedded_chars = tf.nn.embedding_lookup(self.W, self.input_x)
+            self.embedding_matrix = tf.Variable(embeddings,
+                                                trainable=True,
+                                                name="W")  # embedding matrix
+            self.embedded_chars = tf.nn.embedding_lookup(self.embedding_matrix, self.input_x)
             self.embedded_chars = tf.expand_dims(self.embedded_chars, -1)  # expand for .conv2d
             self.embedded_chars = tf.cast(self.embedded_chars, tf.float32)
 
