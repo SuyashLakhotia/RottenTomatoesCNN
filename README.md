@@ -109,6 +109,37 @@ This model is almost identical to Model v2, except that the word embeddings are 
 
 There is only a slight increase in accuracy, however, an interesting observation is that the model is more prone to overfitting when learning the embeddings (training accuracy is almost consistently 100% towards the end) as opposed to Model v2, which never *consistently* had a 100% training accuracy.
 
+### Advantages of Tuning Pre-Trained Embeddings
+
+> A version of these observations is also recorded in Kim's paper.
+
+In order to better understand why fine-tuning embeddings that are learned on a massive dataset for the task at hand is helpful, I extracted the 10 most similar words (using cosine similarity) for the following words from the learned embeddings of both models. The code can be found in `word_similarity.py`:
+
+**`good`:**
+
+```
+v2.0: ['good', 'great', 'bad', 'terrific', 'decent', 'nice', 'excellent', 'fantastic', 'better', 'solid']
+v2.1: ['good', 'terrific', 'decent', 'great', 'nice', 'solid', 'fantastic', 'excellent', 'better', 'wonderful']
+```
+
+**`bad`:**
+
+```
+v2.0: ['bad', 'good', 'terrible', 'horrible', 'lousy', 'crummy', 'horrid', 'awful', 'dreadful', 'nasty']
+v2.1: ['bad', 'horrible', 'terrible', 'lousy', 'awful', 'nasty', 'crummy', 'rotten', 'crappy', 'scary']
+```
+
+In v2 (default pre-trained embeddings), "bad" & "good" are considered similar words perhaps due to their syntactical purpose, however, they mean completely different things for the task at hand and this is reflected in the embeddings learned in v2.1.
+
+**`clooney`:**
+
+```
+v2.0: ['clooney', 'aniston', 'jackie', 'angelina', 'jolie', 'vh1', 'shrek', 'vanessa', 'nolan', 'halle']
+v2.1: ['clooney', 'erika', 'kidman', 'vh1', 'halle', 'aniston', 'vanessa', 'catherine', 'naturedly', 'katz']
+```
+
+Another interesting change is with the names of actors. For example, "clooney" is considered more similar to "aniston" in the pre-trained embeddings than the fine-tuned ones.
+
 ---
 
 ## References
