@@ -53,7 +53,7 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2:** 0.0
+- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 74.30%
 
@@ -85,7 +85,7 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2:** 0.0
+- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 79.00% <!-- 0.789869 -->
 
@@ -103,7 +103,7 @@ This model is almost identical to Model v2, except that the word embeddings are 
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2:** 0.0
+- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 80.21% <!-- 0.802064 -->
 
