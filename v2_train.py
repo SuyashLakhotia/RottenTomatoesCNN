@@ -75,19 +75,19 @@ words_in_embedding = 0
 with open(embedding_file, "rb") as f:
     header = f.readline()
     vocab_size, embedding_size = map(int, header.split())
-    binary_len = np.dtype('float32').itemsize * embedding_size
+    binary_len = np.dtype("float32").itemsize * embedding_size
     for line in range(vocab_size):
         word = []
         while True:
-            ch = f.read(1).decode('latin-1')
-            if ch == ' ':
-                word = ''.join(word)
+            ch = f.read(1).decode("latin-1")
+            if ch == " ":
+                word = "".join(word)
                 break
-            if ch != '\n':
+            if ch != "\n":
                 word.append(ch)
         idx = vocab_processor.vocabulary_.get(word)
         if idx != 0:
-            embeddings[idx] = np.fromstring(f.read(binary_len), dtype='float32')
+            embeddings[idx] = np.fromstring(f.read(binary_len), dtype="float32")
             words_in_embedding += 1
         else:
             f.read(binary_len)

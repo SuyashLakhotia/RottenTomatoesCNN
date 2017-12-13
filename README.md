@@ -1,10 +1,10 @@
-# CNN for Rotten Tomatoes Movie Reviews
+# CNN for Classifying Rotten Tomatoes Movie Reviews
 
 > This model aims to classify movie reviews from Rotten Tomatoes as either positive or negative.
 
 ## Dataset Description
 
-The dataset used is Pang and Lee's movie review dataset (`sentence polarity dataset v1.0` from [here](http://www.cs.cornell.edu/people/pabo/movie-review-data/)), which consists of 5,331 positive and 5,331 negative sentences, formed from a vocabulary size of ~20,000.
+The dataset used is Pang and Lee's movie review sentiment polarity dataset (`sentence polarity dataset v1.0` from [here](http://www.cs.cornell.edu/people/pabo/movie-review-data/)), which consists of 5,331 positive and 5,331 negative sentences, formed from a vocabulary size of ~20,000.
 
 ### Preprocessing
 
@@ -145,7 +145,7 @@ Another interesting change is with the names of actors. For example, "clooney" i
 ## References
 
 - [Convolutional Neural Networks for Sentence Classification - Yoon Kim](https://arxiv.org/abs/1408.5882)
-- https://github.com/yoonkim/CNN_sentence
+    - https://github.com/yoonkim/CNN_sentence
 - [A Sensitivity Analysis of (and Practitioners' Guide to) Convolutional Neural Networks for Sentence Classification - Ye Zhang & Bryon C. Wallace](https://arxiv.org/abs/1510.03820)
 - [Implementing a CNN for Text Classification - Denny Britz](http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/)
-- https://github.com/dennybritz/cnn-text-classification-tf
+    - https://github.com/dennybritz/cnn-text-classification-tf

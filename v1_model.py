@@ -19,11 +19,11 @@ class TextCNN(object):
         l2_loss = tf.constant(0.0)
 
         # Embedding layer
-        with tf.device('/cpu:0'), tf.name_scope("embedding"):
+        with tf.device("/cpu:0"), tf.name_scope("embedding"):
             self.embedding_matrix = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0),
                                                 name="W")  # embedding matrix
-            self.embedded_chars = tf.nn.embedding_lookup(self.embedding_matrix, self.input_x)
-            self.embedded_chars = tf.expand_dims(self.embedded_chars, -1)  # expand for .conv2d
+            self.embedded_x = tf.nn.embedding_lookup(self.embedding_matrix, self.input_x)
+            self.embedded_x = tf.expand_dims(self.embedded_x, -1)  # expand for .conv2d
 
         # Create a convolution + maxpool layer for each filter size
         pooled_outputs = []
@@ -33,7 +33,7 @@ class TextCNN(object):
                 filter_shape = [filter_size, embedding_size, 1, num_filters]
                 W = tf.Variable(tf.truncated_normal(filter_shape, stddev=0.1), name="W")
                 b = tf.Variable(tf.constant(0.1, shape=[num_filters]), name="b")
-                conv = tf.nn.conv2d(self.embedded_chars,
+                conv = tf.nn.conv2d(self.embedded_x,
                                     W,
                                     strides=[1, 1, 1, 1],
                                     padding="VALID",
