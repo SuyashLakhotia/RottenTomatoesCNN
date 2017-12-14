@@ -62,6 +62,9 @@ y_shuffled = y[shuffle_indices]
 test_sample_index = -1 * int(test_sample_percentage * float(len(y)))
 x_train, x_test = x_shuffled[:test_sample_index], x_shuffled[test_sample_index:]
 y_train, y_test = y_shuffled[:test_sample_index], y_shuffled[test_sample_index:]
+
+del x, y, x_shuffled, y_shuffled  # don't need these anymore
+
 print("Vocabulary Size: %d" % (len(vocab_processor.vocabulary_)))
 print("Train/Test Split: %d/%d" % (len(y_train), len(y_test)))
 
@@ -147,7 +150,7 @@ with tf.Graph().as_default():
         test_summary_dir = os.path.join(out_dir, "summaries", "test")
         test_summary_writer = tf.summary.FileWriter(test_summary_dir, sess.graph)
 
-        # Checkpoint directory
+        # Checkpoint directory & saver
         checkpoint_dir = os.path.abspath(os.path.join(out_dir, "checkpoints"))
         checkpoint_prefix = os.path.join(checkpoint_dir, "model")
         if not os.path.exists(checkpoint_dir):
