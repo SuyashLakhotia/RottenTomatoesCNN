@@ -12,7 +12,7 @@ The dataset used is Pang and Lee's movie review sentiment polarity dataset (`sen
 
 1. Load the data from the files inside `data/`.
 2. `.strip()` every sentence.
-3. Replace any characters that don't match ``[A-Za-z0-9(),!?\'\`]`` with a whitespace.
+3. Replace any characters that don't match ``/[A-Za-z0-9(),!?\'\`]/`` with a whitespace.
 4. Insert a whitespace between a word and a clitic (`'ve`, `'re` etc.), if any.
 5. Insert a whitespace before punctuation marks.
 6. Delete any repeated whitespaces.
@@ -23,7 +23,7 @@ The dataset used is Pang and Lee's movie review sentiment polarity dataset (`sen
 
 ### Data Preparation
 
-The sentences from the dataset are fed into TensorFlow's `VocabularyProcessor`, which builds a vocabulary index and maps each word to an integer between 0 and 18,757 (vocabulary size). Each sentence is padded with special padding tokens `<UNK>` (index of 0 in vocabulary) to fit the maximum sentence size of 56 words.
+The sentences from the dataset are fed into TensorFlow's `VocabularyProcessor`, which builds a vocabulary index and maps each word to an integer between 0 and 18,757 (`|V| = 18,758`). Each sentence is padded with special padding tokens `<UNK>` (index of 0 in vocabulary) to fit the maximum sentence size of 56 words.
 
 The data is shuffled and 10% of the dataset is used as the test set.
 
