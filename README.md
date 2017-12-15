@@ -61,7 +61,7 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 Crude hyperparameter tuning was performed for the regularization terms to check for any drastic changes in model performance. The results are documented [here](v1_Regularization_Tuning.md).
 
-## Model v2
+## Model v2 - Pre-Trained Embeddings
 
 ### Data Preparation
 
@@ -81,7 +81,7 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 
 ![](plots/1507798871-Accuracy.png)
 
-- **Embedding Dimensionality:** 128
+- **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
@@ -91,7 +91,7 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 
 This model performed better than Model v1 (~5% increase in accuracy), which suggests that learning the word embeddings from the relatively smaller movie review dataset is not ideal.
 
-## Model v2.1
+## Model v2.1 - Fine-tuning Pre-Trained Embeddings
 
 This model is almost identical to Model v2, except that the word embeddings are initialized with the pre-trained vectors but also fine-tuned (i.e. learned) during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `v2_model.py`.
 
@@ -99,7 +99,7 @@ This model is almost identical to Model v2, except that the word embeddings are 
 
 ![](plots/1507803080-Accuracy.png)
 
-- **Embedding Dimensionality:** 128
+- **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
