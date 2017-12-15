@@ -113,8 +113,7 @@ with tf.Graph().as_default():
                       embeddings=embeddings,
                       filter_sizes=list(map(int, filter_sizes.split(","))),
                       num_filters=num_filters,
-                      l2_reg_lambda=l2_reg_lambda,
-                      batch_size=batch_size)
+                      l2_reg_lambda=l2_reg_lambda)
 
         # Define training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
