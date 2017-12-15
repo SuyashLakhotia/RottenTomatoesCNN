@@ -29,7 +29,7 @@ l2_reg_lambda = 0.0  # L2 regularization lambda
 # Training parameters
 learning_rate = 1e-3
 batch_size = 64
-num_epochs = 50
+num_epochs = 200
 evaluate_every = 100  # evaluate model on validation set after this many steps
 checkpoint_every = 100  # save model after this many steps
 num_checkpoints = 5  # number of checkpoints to store
