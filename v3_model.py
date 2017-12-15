@@ -34,7 +34,6 @@ class TextCNN(object):
             normalized_embeddings = tf.reshape(tf.tile(normalized_embeddings, [batch_size, 1]),
                                                [batch_size, vocab_size, embedding_size])
             self.similarity = tf.matmul(embedded_x, normalized_embeddings, transpose_b=True)
-
             self.similarity = tf.expand_dims(self.similarity, -1)  # expand for .conv2d
             self.similarity = tf.cast(self.similarity, tf.float32)
 

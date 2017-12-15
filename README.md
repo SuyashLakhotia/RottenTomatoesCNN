@@ -140,6 +140,22 @@ v2.1: ['clooney', 'erika', 'kidman', 'vh1', 'halle', 'aniston', 'vanessa', 'cath
 
 Another interesting change is with the names of actors. For example, "clooney" is considered more similar to "aniston" in the pre-trained embeddings than the fine-tuned ones.
 
+## Model v3 - Similarity Matrix
+
+Model v3 uses the pre-trained word embeddings (with fine-tuning) as in v2.1, however, the input given to the network is not the `56 x 300` sentence matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) because the embeddings are fine-tuned during training.
+
+This model has a lot of trainable parameters and is probably not practical but helps represent the words in a graph-like structure using the cosine similarity values.
+
+![](plots/1513321785-Accuracy.png)
+
+- **Embedding Dimensionality:** 300
+- **Filter Sizes:** 3, 4, 5
+- **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
+- **L2 Lambda:** 0.0
+
+**Maximum Test Accuracy:** 75.61% <!-- 0.756097555 -->
+
 ---
 
 ## References
