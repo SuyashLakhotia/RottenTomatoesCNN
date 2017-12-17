@@ -146,7 +146,7 @@ Model v3 uses the pre-trained word embeddings (with fine-tuning) as in v2.1, how
 
 This model has a lot of trainable parameters and is probably not practical but helps represent the words in a graph-like structure using the cosine similarity values.
 
-![](plots/1513321785-Accuracy.png)
+![](plots/1513349213-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
@@ -154,7 +154,7 @@ This model has a lot of trainable parameters and is probably not practical but h
 - **Dropout Keep Probability:** 0.5
 - **L2 Lambda:** 0.0
 
-**Maximum Test Accuracy:** 75.61% <!-- 0.756097555 -->
+**Maximum Test Accuracy:** 75.61% <!-- 0.756098 -->
 
 ---
 
