@@ -61,7 +61,7 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 Crude hyperparameter tuning was performed for the regularization terms to check for any drastic changes in model performance. The results are documented [here](v1_Regularization_Tuning.md).
 
-## Model v2 - Pre-Trained Embeddings
+## Model v2: Pre-Trained Embeddings
 
 ### Data Preparation
 
@@ -91,7 +91,7 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 
 This model performed better than Model v1 (~5% increase in accuracy), which suggests that learning the word embeddings from the relatively smaller movie review dataset is not ideal.
 
-## Model v2.1 - Fine-tuning Pre-Trained Embeddings
+## Model v2.1: Fine-Tuning Pre-Trained Embeddings
 
 This model is almost identical to Model v2, except that the word embeddings are initialized with the pre-trained vectors but also fine-tuned (i.e. learned) during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `v2_model.py`.
 
@@ -112,6 +112,8 @@ There is only a slight increase in accuracy, however, an interesting observation
 ### Advantages of Tuning Pre-Trained Embeddings
 
 > A version of these observations is also recorded in Kim's paper.
+
+The obvious advantage is the fact that 2,310 words from the vocabulary are not present in the pre-trained embeddings and are randomly initialized. Without training the embeddings too, these randomly initialized word vectors will remain the same and may affect the model's performance.
 
 In order to better understand why fine-tuning embeddings that are learned on a massive dataset for the task at hand is helpful, I extracted the 10 most similar words (using cosine similarity) for the following words from the learned embeddings of both models. The code can be found in `word_similarity.py`:
 
@@ -140,7 +142,7 @@ v2.1: ['clooney', 'erika', 'kidman', 'vh1', 'halle', 'aniston', 'vanessa', 'cath
 
 Another interesting change is with the names of actors. For example, "clooney" is considered more similar to "aniston" in the pre-trained embeddings than the fine-tuned ones.
 
-## Model v3 - Similarity Matrix
+## Model v3: Similarity Matrix
 
 Model v3 uses the pre-trained word embeddings (with fine-tuning) as in v2.1, however, the input given to the network is not the `56 x 300` sentence matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) because the embeddings are fine-tuned during training.
 
