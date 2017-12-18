@@ -43,6 +43,10 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 > **NOTE:** Does not include training parameters like learning rate, batch size etc.
 
+#### Computational Graph
+
+![](graphs/v1_Graph.png)
+
 ### Model Performance
 
 > The code for training can be found in `v1_train.py`.
@@ -140,9 +144,17 @@ Another interesting change is with the names of actors (since this is a movie re
 
 ## Model v3: Similarity Matrix
 
+### Model Description
+
+> The code for the model can be found in `v3_model.py`.
+
 Model v3 uses the pre-trained word embeddings (with fine-tuning) as in v2.1, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training.
 
 This model has a lot of trainable parameters and is probably not practical but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining a grid needed for convolution operations.
+
+### Model Performance
+
+> The code for training can be found in `v3_train.py`.
 
 ![](plots/1513349213-Accuracy.png)
 
