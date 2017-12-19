@@ -17,12 +17,11 @@ class GraphCNN(object):
     """
 
     def __init__(self, L, K, F, p, batch_size, num_vertices, num_classes, l2_reg_lambda):
-        # Verify consistency w.r.t. the number of layers
-        assert len(L) >= len(F) == len(K) == len(p)
-        assert np.all(np.array(p) >= 1)  # all pool sizes >= 1
-        p_log2 = np.where(np.array(p) > 1, np.log2(p), 0)
-        assert np.all(np.mod(p_log2, 1) == 0)  # all pool sizes > 1 should be powers of 2
-        assert len(L) >= 1 + np.sum(p_log2)  # enough coarsening levels for pool sizes
+        # assert len(L) >= len(F) == len(K) == len(p)  # verify consistency w.r.t. the no. of GCLs
+        # assert np.all(np.array(p) >= 1)  # all pool sizes >= 1
+        # p_log2 = np.where(np.array(p) > 1, np.log2(p), 0)
+        # assert np.all(np.mod(p_log2, 1) == 0)  # all pool sizes > 1 should be powers of 2
+        # assert len(L) >= 1 + np.sum(p_log2)  # enough coarsening levels for pool sizes
 
         # Placeholders for input, output and dropout
         self.input_x = tf.placeholder(tf.float32, [batch_size, num_vertices], name="input_x")
@@ -42,28 +41,33 @@ class GraphCNN(object):
         L = self.L
 
         # Expand dims for convolution operation
-        x = tf.expand_dims(self.input_x, 2)  # B x V x F=1
+        self.x_expanded = tf.expand_dims(self.input_x, 2)  # B x V x F=1
 
         # Graph convolutional + pooling layer(s)
+        pooled_outputs = []
         for i in range(len(F)):
             with tf.name_scope("conv-maxpool-{}".format(i + 1)):
-                F_in = int(x.get_shape()[2])
+                F_in = int(self.x_expanded.get_shape()[2])
                 W = tf.Variable(tf.truncated_normal([F_in * K[i], F[i]], stddev=0.1), name="W")
                 b = tf.Variable(tf.constant(0.1, shape=[1, 1, F[i]]), name="b")
-                x = self.graph_conv_cheby(x, W, L[i], F[i], K[i]) + b
-                x = tf.nn.relu(x)
-                x = self.graph_max_pool(x, p[i])
+                conv = self.graph_conv_cheby(self.x_expanded, W, L[i], F[i], K[i]) + b
+                h = tf.nn.relu(conv)
+                pooled = self.graph_max_pool(h, p[i])
+                pooled_outputs.append(pooled)
+
+        num_features_total = np.sum(F)
+        self.h_pool = tf.concat(pooled_outputs, 2)
 
         # Add dropout
         with tf.name_scope("dropout"):
-            self.h = tf.nn.dropout(x, self.dropout_keep_prob)
+            self.h_drop = tf.nn.dropout(self.h_pool, self.dropout_keep_prob)
 
         # Final (unnormalized) scores and predictions
         with tf.name_scope("output"):
-            B, V, F = self.h.get_shape()
+            B, V, F = self.h_drop.get_shape()
             B, V, F = int(B), int(V), int(F)
 
-            x = tf.reshape(self.h, [B, V * F])
+            x = tf.reshape(self.h_drop, [B, V * F])
             W = tf.get_variable("W",
                                 shape=[V * F, num_classes],
                                 initializer=tf.contrib.layers.xavier_initializer())

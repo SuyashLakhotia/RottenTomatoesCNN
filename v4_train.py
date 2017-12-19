@@ -30,9 +30,9 @@ embedding_file = "data/GoogleNews-vectors-negative300.bin"  # word embeddings fi
 num_frequent_words = 5000  # number of frequent words to retain
 
 # Model hyperparameters
-polynomial_orders = [4]  # Chebyshev polynomial orders (i.e. filter sizes)
-num_features = [128]  # no. of features for every GCL
-pooling_sizes = [1]  # pooling sizes (1 (no pooling) or power of 2)
+polynomial_orders = [3, 4, 5]  # Chebyshev polynomial orders (i.e. filter sizes)
+num_features = [128, 128, 128]  # no. of features for every GCL
+pooling_sizes = [1, 1, 1]  # pooling sizes (1 (no pooling) or power of 2)
 dropout_keep_prob = 0.5  # dropout keep probability
 l2_reg_lambda = 0.0  # L2 regularization lambda
 
