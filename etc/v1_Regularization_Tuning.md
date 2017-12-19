@@ -8,7 +8,7 @@ Below are the details of training runs performed with different regularization v
 
 Dropout Keep Probability: 0.5, L2: 0.0
 
-![](plots/1506156971-Accuracy.png)
+![](plots/v1/1506156971-Accuracy.png)
 
 **Maximum Test Accuracy:** 75.80%
 
@@ -18,37 +18,37 @@ Since test accuracy is significantly below training accuracy, it suggests that t
 
 ### Dropout Keep Probability: 0.1
 
-![](plots/1506787497-Accuracy.png)
+![](plots/v1/1506787497-Accuracy.png)
 
 **Maximum Test Accuracy:** 74.67%
 
 ### Dropout Keep Probability: 0.3
 
-![](plots/1506762981-Accuracy.png)
+![](plots/v1/1506762981-Accuracy.png)
 
 **Maximum Test Accuracy:** 73.08%.
 
 ### Dropout Keep Probability: 0.4
 
-![](plots/1506784601-Accuracy.png)
+![](plots/v1/1506784601-Accuracy.png)
 
 **Maximum Test Accuracy:** 74.11%.
 
 ### Dropout Keep Probability: 0.5
 
-![](plots/1506156971-Accuracy.png)
+![](plots/v1/1506156971-Accuracy.png)
 
 **Maximum Test Accuracy:** 75.80%.
 
 ### Dropout Keep Probability: 0.6
 
-![](plots/1506786386-Accuracy.png)
+![](plots/v1/1506786386-Accuracy.png)
 
 **Maximum Test Accuracy:** 74.77%
 
 ### Dropout Keep Probability: 0.9
 
-![](plots/1506789552-Accuracy.png)
+![](plots/v1/1506789552-Accuracy.png)
 
 **Maximum Test Accuracy:** 72.70%
 
@@ -58,18 +58,18 @@ After finding the dropout rate to be somewhat optimal at 0.5, I experimented wit
 
 ### L2: 0.95
 
-![](plots/1507472715-Accuracy.png)
+![](plots/v1/1507472715-Accuracy.png)
 
 **Maximum Test Accuracy:** 75.61%
 
 ### L2: 0.50
 
-![](plots/1507483644-Accuracy.png)
+![](plots/v1/1507483644-Accuracy.png)
 
 **Maximum Test Accuracy:** 73.64%
 
 ### L2: 0.15
 
-![](plots/1507480217-Accuracy.png)
+![](plots/v1/1507480217-Accuracy.png)
 
 **Maximum Test Accuracy:** 75.52%

@@ -29,7 +29,7 @@ The data is shuffled and 10% of the dataset is used as the test set.
 
 ### Model Description
 
-> The code for the model can be found in `v1_model.py`.
+> The code for the model can be found in `text_cnn.py`.
 
 The model consists of an embedding layer followed by multiple convolutional + max-pool layers before the output is classified using a softmax layer.
 
@@ -51,7 +51,7 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 > The code for training can be found in `v1_train.py`.
 
-![](plots/1507628197-Accuracy.png)
+![](plots/v1/1507628197-Accuracy.png)
 
 - **Embedding Dimensionality:** 128
 - **Filter Sizes:** 3, 4, 5
@@ -69,7 +69,7 @@ Crude hyperparameter tuning was performed for the regularization terms to check 
 
 ### Model Description
 
-> The code for the model can be found in `v2_model.py`.
+> The code for the model can be found in `text_cnn.py`.
 
 This model is almost identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`, which contains vectors for 3 million words and phrases trained on a corpus of ~100 billion words from Google News) instead of learning the embeddings from the dataset. The embeddings of the 2,310 words not present in `word2vec` are randomly initialized and all embeddings are kept static during training.
 
@@ -79,7 +79,7 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 
 > The code for training can be found in `v2_train.py`.
 
-![](plots/1507798871-Accuracy.png)
+![](plots/v2/1507798871-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
@@ -93,11 +93,11 @@ This model performed better than Model v1 (~5% increase in accuracy), which sugg
 
 ## Model v2.1: Fine-Tuning Pre-Trained Embeddings
 
-This model improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained embeddings during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `v2_model.py`.
+This model improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained embeddings during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `text_cnn.py`.
 
 ### Model Performance
 
-![](plots/1507803080-Accuracy.png)
+![](plots/v2.1/1507803080-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
@@ -146,17 +146,17 @@ Another interesting change is with the names of actors (since this is a movie re
 
 ### Model Description
 
-> The code for the model can be found in `v3_model.py`.
+> The code for the model can be found in `text_similarity_cnn.py`.
 
 Model v3 uses the pre-trained word embeddings (with fine-tuning) as in v2.1, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training.
 
-This model has a lot of trainable parameters and is probably not practical but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining a grid needed for convolution operations.
+This model has a lot of trainable parameters and is probably not practical but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining the 2D grid needed for convolution operations.
 
 ### Model Performance
 
 > The code for training can be found in `v3_train.py`.
 
-![](plots/1513349213-Accuracy.png)
+![](plots/v3/1513349213-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
@@ -170,7 +170,7 @@ This model has a lot of trainable parameters and is probably not practical but h
 
 ### Model Description
 
-> The code for the model can be found in `v4_model.py`.
+> The code for the model can be found in `text_gcnn.py`.
 
 Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model (of the condensed vocabulary of 5,000 words), normalized across words.
 
@@ -178,7 +178,7 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 
 > The code for training can be found in `v4_train.py`.
 
-![](plots/1513510373-Accuracy.png)
+![](plots/v4/1513510373-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
