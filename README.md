@@ -166,6 +166,31 @@ This model has a lot of trainable parameters and is probably not practical but h
 
 **Maximum Test Accuracy:** 75.61% <!-- 0.756098 -->
 
+## Model v4: Graph CNN
+
+### Model Description
+
+> The code for the model can be found in `v4_model.py`.
+
+Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model (of the condensed vocabulary of 5,000 words), normalized across words.
+
+### Model Performance
+
+> The code for training can be found in `v4_train.py`.
+
+![](plots/1513510373-Accuracy.png)
+
+- **Embedding Dimensionality:** 300
+- **No. of Nearest Neighbors:** 16
+- **Coarsening Levels:** 0
+- **Chebyshev Polynomial Order(s):** 4
+- **No. of Output Features per Vertex (for each GCL):** 128
+- **Pooling Size(s):** 1 (no pooling)
+- **Dropout Keep Probability:** 0.5
+- **L2 Lambda:** 0.0
+
+**Maximum Test Accuracy:** 74.77% <!-- 0.747655 -->
+
 ---
 
 ## References
@@ -175,3 +200,5 @@ This model has a lot of trainable parameters and is probably not practical but h
 - [A Sensitivity Analysis of (and Practitioners' Guide to) Convolutional Neural Networks for Sentence Classification - Ye Zhang & Bryon C. Wallace](https://arxiv.org/abs/1510.03820)
 - [Implementing a CNN for Text Classification - Denny Britz](http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/)
     - https://github.com/dennybritz/cnn-text-classification-tf
+- [Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering](https://arxiv.org/abs/1606.09375)
+    - https://github.com/mdeff/cnn_graph

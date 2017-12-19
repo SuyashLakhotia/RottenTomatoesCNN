@@ -1,7 +1,8 @@
-import numpy as np
 import re
 import itertools
-from collections import Counter
+import collections
+
+import numpy as np
 
 
 def clean_str(string):
@@ -38,6 +39,8 @@ def load_data_and_labels(positive_data_file, negative_data_file):
     # Split by words
     x_text = positive_examples + negative_examples
     x_text = [clean_str(sent) for sent in x_text]
+    # Convert to numpy array
+    x_text = np.array(x_text)
     # Generate labels
     positive_labels = [[0, 1] for _ in positive_examples]
     negative_labels = [[1, 0] for _ in negative_examples]
@@ -51,16 +54,13 @@ def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
     data = np.array(data)
     data_size = len(data)
-    num_batches_per_epoch = int((len(data) - 1) / batch_size) + 1
-    for epoch in range(num_epochs):
-        # Shuffle the data at each epoch
-        if shuffle:
-            shuffle_indices = np.random.permutation(np.arange(data_size))
-            shuffled_data = data[shuffle_indices]
-        else:
-            shuffled_data = data
-        # Generate mini-batch of data
-        for batch_num in range(num_batches_per_epoch):
-            start_index = batch_num * batch_size
-            end_index = min((batch_num + 1) * batch_size, data_size)
-            yield shuffled_data[start_index:end_index]
+    indices = collections.deque()
+    num_iterations = int(num_epochs * data_size / batch_size)
+    for step in range(1, num_iterations + 1):
+        if len(indices) < batch_size:
+            if shuffle:
+                indices.extend(np.random.permutation(data_size))
+            else:
+                indices.extend(np.arange(data_size))
+        idx = [indices.popleft() for i in range(batch_size)]
+        yield data[idx]
