@@ -1,6 +1,4 @@
-# CNN for Classifying Rotten Tomatoes Movie Reviews
-
-> This model aims to classify movie reviews from Rotten Tomatoes as either positive or negative.
+# Rotten Tomatoes Movie Reviews Classifier
 
 ## Dataset Description
 
@@ -31,7 +29,11 @@ The data is shuffled and 10% of the dataset is used as the test set.
 
 > The code for the model can be found in `text_cnn.py`.
 
-The model consists of an embedding layer followed by multiple convolutional + max-pool layers before the output is classified using a softmax layer.
+The model consists of an embedding layer followed by multiple parallel convolutional + max-pool layers before the outputs are combined and classified by a softmax layer.
+
+#### Computational Graph
+
+![](graphs/v1_Graph.png)
 
 #### Hyperparameters
 
@@ -42,10 +44,6 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 - `dropout_keep_prob`: Probability of keeping a neuron in the dropout layer.
 
 > **NOTE:** Does not include training parameters like learning rate, batch size etc.
-
-#### Computational Graph
-
-![](graphs/v1_Graph.png)
 
 ### Model Performance
 
@@ -61,17 +59,13 @@ The model consists of an embedding layer followed by multiple convolutional + ma
 
 **Maximum Test Accuracy:** 74.30%
 
-### Crude Regularization Tuning
-
-Crude hyperparameter tuning was performed for the regularization terms to check for any drastic changes in model performance. The results are documented [here](v1_Regularization_Tuning.md).
-
 ## Model v2: Pre-Trained Embeddings
 
 ### Model Description
 
 > The code for the model can be found in `text_cnn.py`.
 
-This model is almost identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`, which contains vectors for 3 million words and phrases trained on a corpus of ~100 billion words from Google News) instead of learning the embeddings from the dataset. The embeddings of the 2,310 words not present in `word2vec` are randomly initialized and all embeddings are kept static during training.
+Model v2 is nearly identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`, which contains vectors for 3 million words and phrases trained on a corpus of ~100 billion words from Google News) instead of learning the embeddings from the dataset. The embeddings of 2,310 words not present in `word2vec` are randomly initialized and all embeddings are kept static during training.
 
 The details of these pre-trained embeddings can be found [here](https://code.google.com/archive/p/word2vec/) and the actual file can be downloaded [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit). The embeddings are processed in `v2_train.py`.
 
@@ -93,7 +87,7 @@ This model performed better than Model v1 (~5% increase in accuracy), which sugg
 
 ## Model v2.1: Fine-Tuning Pre-Trained Embeddings
 
-This model improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained embeddings during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `text_cnn.py`.
+Model v2.1 improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained embeddings during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `text_cnn.py`.
 
 ### Model Performance
 
@@ -131,16 +125,7 @@ v2.0: ['bad', 'good', 'terrible', 'horrible', 'lousy', 'crummy', 'horrid', 'awfu
 v2.1: ['bad', 'horrible', 'terrible', 'lousy', 'awful', 'nasty', 'crummy', 'rotten', 'crappy', 'scary']
 ```
 
-In v2 (default pre-trained embeddings), "bad" & "good" are considered similar words perhaps due to their syntactical purpose, however, they mean completely different things for the task at hand and this is reflected in the embeddings learned in v2.1.
-
-**`clooney`:**
-
-```
-v2.0: ['clooney', 'aniston', 'jackie', 'angelina', 'jolie', 'vh1', 'shrek', 'vanessa', 'nolan', 'halle']
-v2.1: ['clooney', 'erika', 'kidman', 'vh1', 'halle', 'aniston', 'vanessa', 'catherine', 'naturedly', 'katz']
-```
-
-Another interesting change is with the names of actors (since this is a movie review dataset). For example, "clooney" is considered more similar to "aniston" in the pre-trained embeddings than the fine-tuned ones.
+In Model v2 (default pre-trained embeddings), "bad" & "good" are considered similar words perhaps due to their syntactical purpose, however, they mean completely different things for the task at hand and this is reflected in the embeddings learned in Model v2.1.
 
 ## Model v3: Similarity Matrix
 
@@ -148,7 +133,7 @@ Another interesting change is with the names of actors (since this is a movie re
 
 > The code for the model can be found in `text_similarity_cnn.py`.
 
-Model v3 uses the pre-trained word embeddings (with fine-tuning) as in v2.1, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training.
+Model v3 uses the pre-trained word embeddings (with fine-tuning) as in Model v2.1, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training.
 
 This model has a lot of trainable parameters and is probably not practical but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining the 2D grid needed for convolution operations.
 
@@ -158,7 +143,7 @@ This model has a lot of trainable parameters and is probably not practical but h
 
 ![](plots/v3/1513349213-Accuracy.png)
 
-- **Embedding Dimensionality:** 300
+- **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
@@ -180,7 +165,7 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 
 ![](plots/v4/1513510373-Accuracy.png)
 
-- **Embedding Dimensionality:** 300
+- **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **No. of Nearest Neighbors:** 16
 - **Coarsening Levels:** 0
 - **Chebyshev Polynomial Order(s):** 4
