@@ -1,11 +1,13 @@
-import tensorflow as tf
-import numpy as np
 import os
 import time
 import datetime
 import data
-from v3_model import TextCNN
+
+import numpy as np
+import tensorflow as tf
 from tensorflow.contrib import learn
+
+from text_similarity_cnn import TextSimilarityCNN
 
 
 # Parameters
@@ -21,8 +23,8 @@ embedding_dim = 300  # dimensionality of embedding
 embedding_file = "data/GoogleNews-vectors-negative300.bin"  # word embeddings file
 
 # Model hyperparameters
-filter_sizes = "3,4,5"  # comma-separated filter sizes
-num_filters = 128  # number of filters per filter size
+filter_heights = "3,4,5"  # comma-separated filter heights
+num_features = 128  # number of features per filter
 dropout_keep_prob = 0.5  # dropout keep probability
 l2_reg_lambda = 0.0  # L2 regularization lambda
 
@@ -50,7 +52,7 @@ x_text, y = data.load_data_and_labels(positive_data_file, negative_data_file)
 max_document_length = max([len(x.split(" ")) for x in x_text])
 vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
 x = np.array(list(vocab_processor.fit_transform(x_text)))
-print("Max. Sentence Length: %d" % (max_document_length))
+print("Max. Sentence Length: {}".format(max_document_length))
 
 # Randomly shuffle data
 np.random.seed(10)
@@ -65,16 +67,16 @@ y_train, y_test = y_shuffled[:test_sample_index], y_shuffled[test_sample_index:]
 
 del x, y, x_shuffled, y_shuffled  # don't need these anymore
 
-print("Vocabulary Size: %d" % (len(vocab_processor.vocabulary_)))
-print("Train/Test Split: %d/%d" % (len(y_train), len(y_test)))
+print("Vocabulary Size: {}".format(len(vocab_processor.vocabulary_)))
+print("Train/Test Split: {}/{}".format(len(y_train), len(y_test)))
 
 # Initialize embedding matrix from pre-trained word2vec embeddings. 0.25 is chosen so that unknown vectors
 # have (approximately) the same variance as pre-trained ones.
 embeddings = np.random.uniform(-0.25, 0.25, (len(vocab_processor.vocabulary_), embedding_dim))
 
 # Process Google News word2vec file (in a memory-friendly way) and store relevant embeddings.
-print("Loading pre-trained embeddings from {}".format(embedding_file))
-words_in_embedding = 0
+print("Loading pre-trained embeddings from {}...".format(embedding_file))
+words_found = 0
 with open(embedding_file, "rb") as f:
     header = f.readline()
     vocab_size, embedding_size = map(int, header.split())
@@ -91,11 +93,11 @@ with open(embedding_file, "rb") as f:
         idx = vocab_processor.vocabulary_.get(word)
         if idx != 0:
             embeddings[idx] = np.fromstring(f.read(binary_len), dtype="float32")
-            words_in_embedding += 1
+            words_found += 1
         else:
             f.read(binary_len)
-print("Word Embeddings Extracted: %d" % (words_in_embedding))
-print("Word Embeddings Randomly Initialized: %d" % (len(vocab_processor.vocabulary_) - words_in_embedding))
+print("Word Embeddings Extracted: {}".format(words_found))
+print("Word Embeddings Randomly Initialized: {}".format(len(vocab_processor.vocabulary_) - words_found))
 
 
 # Training
@@ -106,14 +108,14 @@ with tf.Graph().as_default():
                                   log_device_placement=log_device_placement)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
-        cnn = TextCNN(sequence_length=x_train.shape[1],
-                      num_classes=y_train.shape[1],
-                      vocab_size=len(vocab_processor.vocabulary_),
-                      embedding_size=embedding_dim,
-                      embeddings=embeddings,
-                      filter_sizes=list(map(int, filter_sizes.split(","))),
-                      num_filters=num_filters,
-                      l2_reg_lambda=l2_reg_lambda)
+        cnn = TextSimilarityCNN(sequence_length=x_train.shape[1],
+                                num_classes=y_train.shape[1],
+                                vocab_size=len(vocab_processor.vocabulary_),
+                                embedding_size=embedding_dim,
+                                embeddings=embeddings,
+                                filter_heights=list(map(int, filter_heights.split(","))),
+                                num_features=num_features,
+                                l2_reg_lambda=l2_reg_lambda)
 
         # Define training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
@@ -121,7 +123,7 @@ with tf.Graph().as_default():
         grads_and_vars = optimizer.compute_gradients(cnn.loss)
         train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
-        # Keep track of gradient values and sparsity (optional)
+        # Keep track of gradient values and sparsity
         grad_summaries = []
         for g, v in grads_and_vars:
             if g is not None:

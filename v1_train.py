@@ -1,11 +1,13 @@
-import tensorflow as tf
-import numpy as np
 import os
 import time
 import datetime
 import data
-from v1_model import TextCNN
+
+import numpy as np
+import tensorflow as tf
 from tensorflow.contrib import learn
+
+from text_cnn import TextCNN
 
 
 # Parameters
@@ -18,8 +20,8 @@ negative_data_file = "data/rt-polarity.neg"
 
 # Model hyperparameters
 embedding_dim = 128  # dimensionality of embedding
-filter_sizes = "3,4,5"  # comma-separated filter sizes
-num_filters = 128  # number of filters per filter size
+filter_heights = "3,4,5"  # comma-separated filter heights
+num_features = 128  # number of features per filter
 dropout_keep_prob = 0.5  # dropout keep probability
 l2_reg_lambda = 0.0  # L2 regularization lambda
 
@@ -47,7 +49,7 @@ x_text, y = data.load_data_and_labels(positive_data_file, negative_data_file)
 max_document_length = max([len(x.split(" ")) for x in x_text])
 vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
 x = np.array(list(vocab_processor.fit_transform(x_text)))
-print("Max. Sentence Length: %d" % (max_document_length))
+print("Max. Sentence Length: {}".format(max_document_length))
 
 # Randomly shuffle data
 np.random.seed(10)
@@ -62,8 +64,8 @@ y_train, y_test = y_shuffled[:test_sample_index], y_shuffled[test_sample_index:]
 
 del x, y, x_shuffled, y_shuffled  # don't need these anymore
 
-print("Vocabulary Size: %d" % (len(vocab_processor.vocabulary_)))
-print("Train/Test Split: %d/%d" % (len(y_train), len(y_test)))
+print("Vocabulary Size: {}".format(len(vocab_processor.vocabulary_)))
+print("Train/Test Split: {}/{}".format(len(y_train), len(y_test)))
 
 
 # Training
@@ -78,8 +80,9 @@ with tf.Graph().as_default():
                       num_classes=y_train.shape[1],
                       vocab_size=len(vocab_processor.vocabulary_),
                       embedding_size=embedding_dim,
-                      filter_sizes=list(map(int, filter_sizes.split(","))),
-                      num_filters=num_filters,
+                      embeddings=None,
+                      filter_heights=list(map(int, filter_heights.split(","))),
+                      num_features=num_features,
                       l2_reg_lambda=l2_reg_lambda)
 
         # Define training procedure
@@ -88,7 +91,7 @@ with tf.Graph().as_default():
         grads_and_vars = optimizer.compute_gradients(cnn.loss)
         train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
-        # Keep track of gradient values and sparsity (optional)
+        # Keep track of gradient values and sparsity
         grad_summaries = []
         for g, v in grads_and_vars:
             if g is not None:

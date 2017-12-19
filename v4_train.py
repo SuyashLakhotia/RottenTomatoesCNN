@@ -10,7 +10,7 @@ import scipy.sparse
 import sklearn.datasets
 import sklearn.metrics
 
-from v4_model import GraphCNN
+from text_gcnn import GraphCNN
 from gcnn import graph, coarsening
 
 
@@ -62,7 +62,7 @@ log_device_placement = False  # log placement of operations on devices
 print("Loading data...")
 x, y = data.load_data_and_labels(positive_data_file, negative_data_file)
 max_document_length = max([len(x_i.split(" ")) for x_i in x])
-print("Max. Sentence Length: %d" % (max_document_length))
+print("Max. Sentence Length: {}".format(max_document_length))
 
 # Randomly shuffle data
 np.random.seed(10)
@@ -84,8 +84,8 @@ vectorizer = sklearn.feature_extraction.text.CountVectorizer(stop_words='english
 x_train = vectorizer.fit_transform(x_train)
 train_vocab = vectorizer.get_feature_names()
 
-print("Vocabulary Size: %d" % (len(train_vocab)))
-print("Train/Test Split: %d/%d" % (len(y_train), len(y_test)))
+print("Vocabulary Size: {}".format(len(train_vocab)))
+print("Train/Test Split: {}/{}".format(len(y_train), len(y_test)))
 
 # Keep only N most-frequent words in data, vocabulary & embeddings
 word_freqs = x_train.sum(axis=0)
@@ -95,7 +95,7 @@ freq_idx = freq_idx[:num_frequent_words]
 x_train = x_train[:, freq_idx]
 train_vocab = [train_vocab[i] for i in freq_idx]
 
-print("Vocabulary Size (Reduced): %d" % (len(train_vocab)))
+print("Vocabulary Size (Reduced): {}".format(len(train_vocab)))
 
 # Initialize embedding matrix from pre-trained word2vec embeddings. 0.25 is chosen so that unknown vectors
 # have (approximately) the same variance as pre-trained ones.
@@ -106,7 +106,7 @@ reverse_vocab = {k: v for v, k in enumerate(train_vocab)}
 
 # Process Google News word2vec file (in a memory-friendly way) and store relevant embeddings.
 print("Loading pre-trained embeddings from {}...".format(embedding_file))
-words_in_embedding = 0
+words_found = 0
 with open(embedding_file, "rb") as f:
     header = f.readline()
     vocab_size, embedding_size = map(int, header.split())
@@ -123,11 +123,11 @@ with open(embedding_file, "rb") as f:
         idx = reverse_vocab[word] if word in reverse_vocab else None
         if idx != None:
             embeddings[idx] = np.fromstring(f.read(binary_len), dtype="float32")
-            words_in_embedding += 1
+            words_found += 1
         else:
             f.read(binary_len)
-print("Word Embeddings Extracted: %d" % (words_in_embedding))
-print("Word Embeddings Randomly Initialized: %d" % (len(train_vocab) - words_in_embedding))
+print("Word Embeddings Extracted: {}".format(words_found))
+print("Word Embeddings Randomly Initialized: {}".format(len(train_vocab) - words_found))
 
 # Process test data using train_vocab
 vectorizer = sklearn.feature_extraction.text.CountVectorizer(vocabulary=train_vocab)
@@ -181,7 +181,7 @@ with tf.Graph().as_default():
         grads_and_vars = optimizer.compute_gradients(cnn.loss)
         train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
-        # Keep track of gradient values and sparsity (optional)
+        # Keep track of gradient values and sparsity
         grad_summaries = []
         for g, v in grads_and_vars:
             if g is not None:
@@ -281,10 +281,10 @@ with tf.Graph().as_default():
             return accuracy
 
         # Convert sparse matrices to arrays
-        # TODO: Is there a workaround for this?
-        # TODO: See https://github.com/tensorflow/tensorflow/issues/342#issuecomment-160354041
-        # TODO: See https://github.com/tensorflow/tensorflow/issues/342#issuecomment-273463729
-        # TODO: See https://stackoverflow.com/questions/37001686/using-sparsetensor-as-a-trainable-variable
+        # TODO: Is there a workaround for this? Doesn't seem memory efficient.
+        # TODO: https://github.com/tensorflow/tensorflow/issues/342#issuecomment-160354041
+        # TODO: https://github.com/tensorflow/tensorflow/issues/342#issuecomment-273463729
+        # TODO: https://stackoverflow.com/questions/37001686/using-sparsetensor-as-a-trainable-variable
         x_train = np.squeeze([x_i.toarray() for x_i in x_train])
         x_test = np.squeeze([x_i.toarray() for x_i in x_test])
 

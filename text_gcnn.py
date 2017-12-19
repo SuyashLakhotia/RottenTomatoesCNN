@@ -7,8 +7,8 @@ from gcnn.graph import rescale_L
 
 class GraphCNN(object):
     """
-    A Graph CNN for text classification.
-    Uses an embedding layer, followed by graph convolutional + max-pooling layer(s) and a softmax layer.
+    A graph CNN for text classification. Composed of graph convolutional + max-pooling layer(s) and a 
+    softmax layer.
 
     L = List of graph Laplacians.
     K = List of polynomial orders i.e. filter sizes (per filter)
@@ -29,7 +29,7 @@ class GraphCNN(object):
         self.input_y = tf.placeholder(tf.float32, [batch_size, num_classes], name="input_y")
         self.dropout_keep_prob = tf.placeholder(tf.float32, name="dropout_keep_prob")
 
-        # Keeping track of l2 regularization loss (optional)
+        # Keeping track of L2 regularization loss
         l2_loss = tf.constant(0.0)
 
         # Keep the useful Laplacians only (may be zero)
@@ -48,9 +48,7 @@ class GraphCNN(object):
         for i in range(len(F)):
             with tf.name_scope("conv-maxpool-{}".format(i + 1)):
                 F_in = int(x.get_shape()[2])
-                # Filter: F_in*F_out filters of order K i.e. one filterbank per feature pair
                 W = tf.Variable(tf.truncated_normal([F_in * K[i], F[i]], stddev=0.1), name="W")
-                # Bias: One bias value per filter
                 b = tf.Variable(tf.constant(0.1, shape=[1, 1, F[i]]), name="b")
                 x = self.graph_conv_cheby(x, W, L[i], F[i], K[i]) + b
                 x = tf.nn.relu(x)
@@ -99,7 +97,7 @@ class GraphCNN(object):
         B, V, F_in = x.get_shape()
         B, V, F_in = int(B), int(V), int(F_in)
 
-        # Rescale Laplacian and store as a TF sparse tensor. Copy to not modify the shared L.
+        # Rescale Laplacian and store as a TF sparse tensor (copy to not modify the shared L)
         L = scipy.sparse.csr_matrix(L)
         L = rescale_L(L, lmax=2)
         L = L.tocoo()
