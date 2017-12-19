@@ -74,8 +74,8 @@ embeddings_v2 = sess.run("embedding/W:0")
 
 # Restore model v2.1
 sess = tf.Session()
-saver = tf.train.import_meta_graph("runs/v2/1507803080/checkpoints/model-7100.meta")
-saver.restore(sess, tf.train.latest_checkpoint("runs/v2/1507803080/checkpoints/."))
+saver = tf.train.import_meta_graph("runs/v2/1513692784/checkpoints/model-5000.meta")
+saver.restore(sess, tf.train.latest_checkpoint("runs/v2/1513692784/checkpoints/."))
 
 # Get embedding matrix
 embeddings_v2_1 = sess.run("embedding/W:0")
