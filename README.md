@@ -33,7 +33,7 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 
 #### Computational Graph
 
-![](graphs/v1_Graph.png)
+![](graphs/v1_Graph_Compressed.png)
 
 #### Hyperparameters
 
@@ -181,7 +181,7 @@ This model has a lot of trainable parameters and is probably not practical but h
 
 > The code for the model can be found in `text_gcnn.py`.
 
-Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model (of the condensed vocabulary of 5,000 words), normalized across words.
+Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model (`|V| = 5,000`), normalized across words.
 
 ### Model Performance
 
