@@ -187,18 +187,43 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 
 > The code for training can be found in `v4_train.py`.
 
+#### Single GCL
+
 ![](plots/v4/1513510373-Accuracy.png)
 
+<!--
 - **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **No. of Nearest Neighbors:** 16
+-->
 - **Coarsening Levels:** 0
 - **Chebyshev Polynomial Order(s):** 4
 - **No. of Output Features per Vertex (for each GCL):** 128
 - **Pooling Size(s):** 1 (no pooling)
+<!--
 - **Dropout Keep Probability:** 0.5
 - **L2 Lambda:** 0.0
+-->
 
 **Maximum Test Accuracy:** 74.77% <!-- 0.747655 -->
+
+#### Multiple GCL (Parallel)
+
+![](plots/v4/1513697965-Accuracy.png)
+
+<!--
+- **Embedding Dimensionality:** 300 (Google's `word2vec`)
+- **No. of Nearest Neighbors:** 16
+-->
+- **Coarsening Levels:** 0
+- **Chebyshev Polynomial Order(s):** 3, 4, 5
+- **No. of Output Features per Vertex (for each GCL):** 128, 128, 128
+- **Pooling Size(s):** 1, 1, 1
+<!--
+- **Dropout Keep Probability:** 0.5
+- **L2 Lambda:** 0.0
+-->
+
+**Maximum Test Accuracy:** 74.58% <!-- 0.74577862 -->
 
 ---
 
