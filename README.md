@@ -15,15 +15,21 @@ The dataset used is Pang and Lee's movie review sentiment polarity dataset (`sen
 5. Insert a whitespace before punctuation marks.
 6. Delete any repeated whitespaces.
 
-## Model v1
-
-> Code based on Denny Britz's TensorFlow adaptation of Kim's model, which is blogged about [here](http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/).
-
-### Data Preparation
+### Data Preparation for Training/Testing
 
 The sentences from the dataset are fed into TensorFlow's `VocabularyProcessor`, which builds a vocabulary index and maps each word to an integer between 0 and 18,757 (`|V| = 18,758`). Each sentence is padded with special padding tokens `<UNK>` (index of 0 in vocabulary) to fit the maximum sentence size of 56 words.
 
 The data is shuffled and 10% of the dataset is used as the test set.
+
+## Model v0: Linear Support Vector Classifier
+
+> The code for the model & training can be found in `svc.py`
+
+In order to establish a baseline for the more complex models below, a simple linear SVC was implemented, which had a test accuracy of 75.52%. The model was trained on the text data by transforming each sentence into the mean of the embeddings (extracted from Google's `word2vec`) of its constituent words.
+
+## Model v1: Convolutional Neural Network
+
+> Code based on Denny Britz's TensorFlow adaptation of Kim's model, which is blogged about [here](http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/).
 
 ### Model Description
 
@@ -40,10 +46,10 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - `embedding_size`: The dimensionality of the embeddings (lower-dimensional vector representations of the vocabulary indices).
 - `filter_sizes`: The number of words the convolutional filters should cover. For example, `[3, 4, 5]` will create filters that slide over 3, 4 and 5 words respectively.
 - `num_filters`: The number of filters per filter size.
-- `l2_reg_lambda`: L2 regularization term. Default is 0.
 - `dropout_keep_prob`: Probability of keeping a neuron in the dropout layer.
+- `l2_reg_lambda`: L2 regularization term. Default is 0.
 
-> **NOTE:** Does not include training parameters like learning rate, batch size etc.
+> **NOTE:** Does not include other training parameters like learning rate, batch size etc.
 
 ### Model Performance
 
@@ -55,7 +61,6 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 74.30%
 
@@ -66,7 +71,6 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Filter Sizes:** 4
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 74.58%
 -->
@@ -78,18 +82,17 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Filter Sizes:** 7
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 74.20%
 -->
 
-## Model v2: Pre-Trained Embeddings
+## Model v2: CNN w/ Pre-Trained Embeddings
 
 ### Model Description
 
 > The code for the model can be found in `text_cnn.py`.
 
-Model v2 is nearly identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`, which contains vectors for 3 million words and phrases trained on a corpus of ~100 billion words from Google News) instead of learning the embeddings from the dataset. The embeddings of 2,310 words not present in `word2vec` are randomly initialized and all embeddings are kept static during training.
+Model v2 is nearly identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`) instead of learning the embeddings from the dataset. The embeddings of 2,310 words not present in `word2vec` are randomly initialized and all embeddings are kept static during training.
 
 The details of these pre-trained embeddings can be found [here](https://code.google.com/archive/p/word2vec/) and the actual file can be downloaded [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit). The embeddings are processed in `v2_train.py`.
 
@@ -103,13 +106,12 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 79.00% <!-- 0.789869 -->
 
 This model performed better than Model v1 (~5% increase in accuracy), which suggests that learning the word embeddings from the relatively smaller movie review dataset is not ideal.
 
-## Model v2.1: Fine-Tuning Pre-Trained Embeddings
+## Model v2.1: CNN w/ Fine-Tuned Pre-Trained Embeddings
 
 Model v2.1 improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained embeddings during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `text_cnn.py`.
 
@@ -121,7 +123,6 @@ Model v2.1 improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 80.21% <!-- 0.802064 -->
 
@@ -151,7 +152,7 @@ v2.1: ['bad', 'horrible', 'terrible', 'lousy', 'awful', 'nasty', 'crummy', 'rott
 
 In Model v2 (default pre-trained embeddings), "bad" & "good" are considered similar words perhaps due to their syntactical purpose, however, they mean completely different things for the task at hand and this is reflected in the embeddings learned in Model v2.1.
 
-## Model v3: Similarity Matrix
+## Model v3: Similarity Matrix CNN
 
 ### Model Description
 
@@ -171,7 +172,6 @@ This model has a lot of trainable parameters and is probably not practical but h
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 
 **Maximum Test Accuracy:** 75.61% <!-- 0.756098 -->
 
@@ -181,7 +181,7 @@ This model has a lot of trainable parameters and is probably not practical but h
 
 > The code for the model can be found in `text_gcnn.py`.
 
-Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model (`|V| = 5,000`), normalized across words.
+Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model, normalized across words (unlike previous models).
 
 ### Model Performance
 
@@ -192,16 +192,15 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 ![](plots/v4/1513510373-Accuracy.png)
 
 <!--
-- **Embedding Dimensionality:** 300 (Google's `word2vec`)
+- **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
 -->
 - **Coarsening Levels:** 0
-- **Chebyshev Polynomial Order(s):** 4
+- **Chebyshev Polynomial Orders:** 4
 - **No. of Output Features per Vertex (for each GCL):** 128
-- **Pooling Size(s):** 1 (no pooling)
+- **Pooling Sizes:** 1 (no pooling)
 <!--
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 -->
 
 **Maximum Test Accuracy:** 74.77% <!-- 0.747655 -->
@@ -211,16 +210,15 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 ![](plots/v4/1513697965-Accuracy.png)
 
 <!--
-- **Embedding Dimensionality:** 300 (Google's `word2vec`)
+- **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
 -->
 - **Coarsening Levels:** 0
-- **Chebyshev Polynomial Order(s):** 3, 4, 5
+- **Chebyshev Polynomial Orders:** 3, 4, 5
 - **No. of Output Features per Vertex (for each GCL):** 128, 128, 128
-- **Pooling Size(s):** 1, 1, 1
+- **Pooling Sizes:** 1, 1, 1
 <!--
 - **Dropout Keep Probability:** 0.5
-- **L2 Lambda:** 0.0
 -->
 
 **Maximum Test Accuracy:** 74.58% <!-- 0.74577862 -->
@@ -234,5 +232,5 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 - [A Sensitivity Analysis of (and Practitioners' Guide to) Convolutional Neural Networks for Sentence Classification - Ye Zhang & Bryon C. Wallace](https://arxiv.org/abs/1510.03820)
 - [Implementing a CNN for Text Classification - Denny Britz](http://www.wildml.com/2015/12/implementing-a-cnn-for-text-classification-in-tensorflow/)
     - https://github.com/dennybritz/cnn-text-classification-tf
-- [Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering](https://arxiv.org/abs/1606.09375)
+- [Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering - Michael Defferrard, Xavier Bresson & Pierre Vandergheynst](https://arxiv.org/abs/1606.09375)
     - https://github.com/mdeff/cnn_graph
