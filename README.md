@@ -71,6 +71,18 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 **Maximum Test Accuracy:** 74.58%
 -->
 
+<!--
+![](plots/v1/1513756469-Accuracy.png)
+
+- **Embedding Dimensionality:** 128
+- **Filter Sizes:** 7
+- **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
+- **L2 Lambda:** 0.0
+
+**Maximum Test Accuracy:** 74.20%
+-->
+
 ## Model v2: Pre-Trained Embeddings
 
 ### Model Description
