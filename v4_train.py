@@ -1,7 +1,6 @@
 import os
 import time
 import datetime
-import data
 
 import numpy as np
 import tensorflow as tf
@@ -10,6 +9,7 @@ import scipy.sparse
 import sklearn.datasets
 import sklearn.metrics
 
+import data
 from text_gcnn import GraphCNN
 from gcnn import graph, coarsening
 
@@ -132,7 +132,7 @@ print("Word Embeddings Randomly Initialized: {}".format(len(train_vocab) - words
 # Process test data using the vectorizer fit to the training data
 x_test = vectorizer.transform(x_test)
 
-# Normalize data to unit length
+# Normalize data
 x_train = x_train.astype(np.float64)
 x_train = sklearn.preprocessing.normalize(x_train, axis=1, norm='l1')
 x_train = x_train.astype(np.float32)

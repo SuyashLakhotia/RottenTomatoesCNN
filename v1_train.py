@@ -1,12 +1,12 @@
 import os
 import time
 import datetime
-import data
 
 import numpy as np
 import tensorflow as tf
 from tensorflow.contrib import learn
 
+import data
 from text_cnn import TextCNN
 
 
