@@ -45,8 +45,8 @@ class GraphCNN(object):
 
         # Graph convolutional + pooling layer(s)
         pooled_outputs = []
-        for i in range(len(F)):
-            with tf.name_scope("conv-maxpool-{}".format(i + 1)):
+        for i in range(len(K)):
+            with tf.name_scope("conv-maxpool-{}".format(K[i])):
                 F_in = int(self.x_expanded.get_shape()[2])
                 W = tf.Variable(tf.truncated_normal([F_in * K[i], F[i]], stddev=0.1), name="W")
                 b = tf.Variable(tf.constant(0.1, shape=[1, 1, F[i]]), name="b")
