@@ -187,23 +187,35 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 
 > The code for training can be found in `v4_train.py`.
 
-#### Single GCL
-
-![](plots/v4/1513510373-Accuracy.png)
+![](plots/v4/1513940188-Accuracy.png)
 
 <!--
 - **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
 -->
 - **Coarsening Levels:** 0
-- **Chebyshev Polynomial Orders:** 4
-- **No. of Output Features per Vertex (for each GCL):** 128
-- **Pooling Sizes:** 1 (no pooling)
+- **Chebyshev Polynomial Order(s):** 5
+- **No. of Output Features per Vertex:** 32
+- **Pooling Size(s):** 1 (no pooling)
 <!--
 - **Dropout Keep Probability:** 0.5
 -->
 
-**Maximum Test Accuracy:** 74.77% <!-- 0.747655 -->
+**Maximum Test Accuracy:** 75.14% <!-- 0.751407146 -->
+
+<!--
+![](plots/v4/1513510373-Accuracy.png)
+
+- **Embedding Dimensionality:** 300
+- **No. of Nearest Neighbors:** 16
+- **Coarsening Levels:** 0
+- **Chebyshev Polynomial Order(s):** 4
+- **No. of Output Features per Vertex:** 128
+- **Pooling Size(s):** 1 (no pooling)
+- **Dropout Keep Probability:** 0.5
+
+**Maximum Test Accuracy:** 74.77%  // 0.747655
+-->
 
 <!--
 #### Multiple GCL (Parallel)
@@ -215,12 +227,12 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 - **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
 - **Coarsening Levels:** 0
-- **Chebyshev Polynomial Orders:** 3, 4, 5
-- **No. of Output Features per Vertex (for each GCL):** 128, 128, 128
-- **Pooling Sizes:** 1, 1, 1
+- **Chebyshev Polynomial Order(s):** 3, 4, 5
+- **No. of Output Features per Vertex:** 128, 128, 128
+- **Pooling Size(s):** 1, 1, 1
 - **Dropout Keep Probability:** 0.5
 
-**Maximum Test Accuracy:** 74.58% // 0.74577862
+**Maximum Test Accuracy:** 74.58%  // 0.74577862
 -->
 
 ---
