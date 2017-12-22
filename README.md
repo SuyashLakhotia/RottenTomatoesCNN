@@ -181,7 +181,7 @@ This model has a lot of trainable parameters and is probably not practical but h
 
 > The code for the model can be found in `text_gcnn.py`.
 
-Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model, normalized across words (unlike previous models).
+Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model, normalized across words.
 
 ### Model Performance
 
@@ -205,23 +205,23 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 
 **Maximum Test Accuracy:** 74.77% <!-- 0.747655 -->
 
+<!--
 #### Multiple GCL (Parallel)
+
+> Similar architecture to previous models with three convolutional layers in parallel whose outputs are concatenated.
 
 ![](plots/v4/1513697965-Accuracy.png)
 
-<!--
 - **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
--->
 - **Coarsening Levels:** 0
 - **Chebyshev Polynomial Orders:** 3, 4, 5
 - **No. of Output Features per Vertex (for each GCL):** 128, 128, 128
 - **Pooling Sizes:** 1, 1, 1
-<!--
 - **Dropout Keep Probability:** 0.5
--->
 
-**Maximum Test Accuracy:** 74.58% <!-- 0.74577862 -->
+**Maximum Test Accuracy:** 74.58% // 0.74577862
+-->
 
 ---
 
