@@ -16,15 +16,12 @@ class GraphCNN(object):
     p = List of pooling sizes (per filter)
     """
 
-    def __init__(self, parallel, L, K, F, p, batch_size, num_vertices, num_classes, l2_reg_lambda):
-        if parallel == True:
-            assert len(F) == len(K) == len(p)
-        else:
-            assert len(L) >= len(F) == len(K) == len(p)  # verify consistency w.r.t. the no. of GCLs
-            assert np.all(np.array(p) >= 1)  # all pool sizes >= 1
-            p_log2 = np.where(np.array(p) > 1, np.log2(p), 0)
-            assert np.all(np.mod(p_log2, 1) == 0)  # all pool sizes > 1 should be powers of 2
-            assert len(L) >= 1 + np.sum(p_log2)  # enough coarsening levels for pool sizes
+    def __init__(self, L, K, F, p, batch_size, num_vertices, num_classes, l2_reg_lambda):
+        assert len(L) >= len(F) == len(K) == len(p)  # verify consistency w.r.t. the no. of GCLs
+        assert np.all(np.array(p) >= 1)  # all pool sizes >= 1
+        p_log2 = np.where(np.array(p) > 1, np.log2(p), 0)
+        assert np.all(np.mod(p_log2, 1) == 0)  # all pool sizes > 1 should be powers of 2
+        assert len(L) >= 1 + np.sum(p_log2)  # enough coarsening levels for pool sizes
 
         # Placeholders for input, output and dropout
         self.input_x = tf.placeholder(tf.float32, [batch_size, num_vertices], name="input_x")
@@ -47,26 +44,14 @@ class GraphCNN(object):
         x = tf.expand_dims(self.input_x, 2)  # B x V x F=1
 
         # Graph convolutional + pooling layer(s)
-        if parallel == True:
-            pooled_outputs = []
         for i in range(len(K)):
             with tf.name_scope("conv-maxpool-{}".format(K[i])):
                 F_in = int(x.get_shape()[2])
                 W = tf.Variable(tf.truncated_normal([F_in * K[i], F[i]], stddev=0.1), name="W")
                 b = tf.Variable(tf.constant(0.1, shape=[1, 1, F[i]]), name="b")
-                if parallel == True:
-                    conv = self.graph_conv_cheby(x, W, L[i], F[i], K[i]) + b
-                    h = tf.nn.relu(conv)
-                    pooled = self.graph_max_pool(h, p[i])
-                    pooled_outputs.append(pooled)
-                else:
-                    x = self.graph_conv_cheby(x, W, L[i], F[i], K[i]) + b
-                    x = tf.nn.relu(x)
-                    x = self.graph_max_pool(x, p[i])
-
-        if parallel == True:
-            num_features_total = np.sum(F)
-            x = tf.concat(pooled_outputs, 2)
+                x = self.graph_conv_cheby(x, W, L[i], F[i], K[i]) + b
+                x = tf.nn.relu(x)
+                x = self.graph_max_pool(x, p[i])
 
         # Add dropout
         with tf.name_scope("dropout"):
