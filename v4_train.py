@@ -34,9 +34,9 @@ number_edges = 16
 coarsening_levels = 0
 
 # Model parameters
-polynomial_orders = [3, 4, 5]  # Chebyshev polynomial orders (i.e. filter sizes)
-num_features = [128, 128, 128]  # no. of features for every GCL
-pooling_sizes = [1, 1, 1]  # pooling sizes (1 (no pooling) or power of 2)
+polynomial_orders = [5]  # Chebyshev polynomial orders (i.e. filter sizes)
+num_features = [32]  # number of features per GCL
+pooling_sizes = [1]  # pooling sizes (1 (no pooling) or power of 2)
 
 # Training parameters
 learning_rate = 1e-3
