@@ -17,8 +17,8 @@ from gcnn import graph, coarsening
 # Parameters
 # ==================================================
 
-# Data params
-test_sample_percentage = 0.1  # percentage of training data to use for validation
+# Data parameters
+test_sample_percentage = 0.1  # percentage of training data to use for testing
 positive_data_file = "data/rt-polarity.pos"
 negative_data_file = "data/rt-polarity.neg"
 
@@ -26,31 +26,32 @@ negative_data_file = "data/rt-polarity.neg"
 embedding_dim = 300  # dimensionality of embedding
 embedding_file = "data/GoogleNews-vectors-negative300.bin"  # word embeddings file
 
-# Preprocessing params
+# Preprocessing parameters
 num_frequent_words = 5000  # number of frequent words to retain
 
-# Model hyperparameters
+# Feature graph parameters
+number_edges = 16
+coarsening_levels = 0
+
+# Model parameters
 polynomial_orders = [3, 4, 5]  # Chebyshev polynomial orders (i.e. filter sizes)
 num_features = [128, 128, 128]  # no. of features for every GCL
 pooling_sizes = [1, 1, 1]  # pooling sizes (1 (no pooling) or power of 2)
-dropout_keep_prob = 0.5  # dropout keep probability
-l2_reg_lambda = 0.0  # L2 regularization lambda
-
-# gCNN parameters
-number_edges = 16
-coarsening_levels = 0
 
 # Training parameters
 learning_rate = 1e-3
 batch_size = 64
 num_epochs = 200
 
-# TF training params
-evaluate_every = 100  # evaluate model on validation set after this many steps
+# Regularization parameters
+dropout_keep_prob = 0.5  # dropout keep probability
+l2_reg_lambda = 0.0  # L2 regularization lambda
+
+# Misc. parameters
+evaluate_every = 100  # evaluate model on test set after this many steps
 checkpoint_every = 100  # save model after this many steps
 num_checkpoints = 5  # number of checkpoints to store
 
-# Misc. parameters
 allow_soft_placement = True  # allow device soft device placement i.e. fall back on available device
 log_device_placement = False  # log placement of operations on devices
 
