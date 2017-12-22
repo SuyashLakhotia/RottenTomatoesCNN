@@ -30,6 +30,7 @@ embedding_file = "data/GoogleNews-vectors-negative300.bin"  # word embeddings fi
 num_frequent_words = 5000  # number of frequent words to retain
 
 # Model hyperparameters
+parallel_conv = True  # true if conv + pooling layers are in parallel
 polynomial_orders = [3, 4, 5]  # Chebyshev polynomial orders (i.e. filter sizes)
 num_features = [128, 128, 128]  # no. of features for every GCL
 pooling_sizes = [1, 1, 1]  # pooling sizes (1 (no pooling) or power of 2)
@@ -169,7 +170,7 @@ with tf.Graph().as_default():
                                   log_device_placement=log_device_placement)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
-        cnn = GraphCNN(L=L, K=polynomial_orders, F=num_features, p=pooling_sizes,
+        cnn = GraphCNN(parallel=parallel_conv, L=L, K=polynomial_orders, F=num_features, p=pooling_sizes,
                        batch_size=batch_size,
                        num_vertices=x_train.shape[1],
                        num_classes=y_train.shape[1],
