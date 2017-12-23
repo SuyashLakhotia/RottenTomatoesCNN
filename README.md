@@ -21,11 +21,15 @@ The sentences from the dataset are fed into TensorFlow's `VocabularyProcessor`, 
 
 The data is shuffled and 10% of the dataset is used as the test set.
 
-## Model v0: Linear Support Vector Classifier
+## Model v0: Baseline Models
 
-> The code for the model & training can be found in `svc.py`
+> The code for the model & training can be found in `baseline.py` & `baseline_embeddings.py`.
 
-In order to establish a baseline for the more complex models below, a simple linear SVC was implemented, which had a test accuracy of 75.52%. The model was trained on the text data by transforming each sentence into the mean of the embeddings (extracted from Google's `word2vec`) of its constituent words.
+In order to establish a baseline for the more complex models below, three simple baseline models were implemented (given below with their respective test accuracies):
+
+1. Linear SVC (TF-IDF Vectorized Input): 76.74%
+2. Multinomial Naive Bayes (TF-IDF Vectorized Input): 77.58%
+3. Linear SVC (Mean of Pre-Trained Word Embeddings): 75.52%
 
 ## Model v1: Convolutional Neural Network
 
