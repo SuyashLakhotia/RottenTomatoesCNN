@@ -21,6 +21,16 @@ The sentences from the dataset are fed into TensorFlow's `VocabularyProcessor`, 
 
 The data is shuffled and 10% of the dataset is used as the test set.
 
+## Summary of Model Performance
+
+| **Model**                                         | **Test Accuracy** |
+|---------------------------------------------------|-------------------|
+| Multinomial Naive Bayes (TF-IDF Vectorized Input) | 77.58%            |
+| Model v1 (CNN)                                    | 74.30%            |
+| Model v2.1 (CNN w/ Pre-Trained Embeddings)        | 80.21%            |
+| Model v3 (CNN on Similarity Matrix)               | 75.61%            |
+| Model v4 (Graph CNN)                              | 75.14%            |
+
 ## Model v0: Baseline Models
 
 > The code for the model & training can be found in `baseline.py` & `baseline_embeddings.py`.
