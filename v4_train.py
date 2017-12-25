@@ -98,37 +98,12 @@ train_vocab = [train_vocab[i] for i in freq_idx]
 
 print("Vocabulary Size (Reduced): {}".format(len(train_vocab)))
 
-# Initialize embedding matrix from pre-trained word2vec embeddings. 0.25 is chosen so that unknown vectors
-# have (approximately) the same variance as pre-trained ones.
-embeddings = np.random.uniform(-0.25, 0.25, (len(train_vocab), embedding_dim))
-
 # Construct reverse lookup vocabulary
 reverse_vocab = {k: v for v, k in enumerate(train_vocab)}
 
 # Process Google News word2vec file (in a memory-friendly way) and store relevant embeddings.
 print("Loading pre-trained embeddings from {}...".format(embedding_file))
-words_found = 0
-with open(embedding_file, "rb") as f:
-    header = f.readline()
-    vocab_size, embedding_size = map(int, header.split())
-    binary_len = np.dtype("float32").itemsize * embedding_size
-    for line in range(vocab_size):
-        word = []
-        while True:
-            ch = f.read(1).decode("latin-1")
-            if ch == " ":
-                word = "".join(word)
-                break
-            if ch != "\n":
-                word.append(ch)
-        idx = reverse_vocab[word] if word in reverse_vocab else None
-        if idx != None:
-            embeddings[idx] = np.fromstring(f.read(binary_len), dtype="float32")
-            words_found += 1
-        else:
-            f.read(binary_len)
-print("Word Embeddings Extracted: {}".format(words_found))
-print("Word Embeddings Randomly Initialized: {}".format(len(train_vocab) - words_found))
+embeddings = data.load_word2vec(embedding_file, reverse_vocab, embedding_dim, tf_VP=False)
 
 # Process test data using the reduced train vocabulary
 vectorizer = sklearn.feature_extraction.text.CountVectorizer(vocabulary=train_vocab)

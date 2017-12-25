@@ -48,6 +48,52 @@ def load_data_and_labels(positive_data_file, negative_data_file):
     return [x_text, y]
 
 
+def load_word2vec(filepath, vocabulary, embedding_dim, tf_VP=False):
+    """
+    Returns the embedding matrix for vocabulary from filepath.
+    """
+
+    if tf_VP:
+        null_index = 0
+    else:
+        null_index = None
+
+    # Initialize embedding matrix from pre-trained word2vec embeddings. 0.25 is chosen so that unknown
+    # vectors have (approximately) the same variance as pre-trained ones.
+    embeddings = np.random.uniform(-0.25, 0.25, (len(vocabulary), embedding_dim))
+
+    words_found = 0
+    with open(filepath, "rb") as f:
+        header = f.readline()
+        word2vec_vocab_size, embedding_size = map(int, header.split())
+        binary_len = np.dtype("float32").itemsize * embedding_size
+        for line in range(word2vec_vocab_size):
+            word = []
+            while True:
+                ch = f.read(1).decode("latin-1")
+                if ch == " ":
+                    word = "".join(word)
+                    break
+                if ch != "\n":
+                    word.append(ch)
+
+            if tf_VP:
+                idx = vocabulary.get(word)
+            else:
+                idx = vocabulary.get(word, None)
+
+            if idx != null_index:
+                embeddings[idx] = np.fromstring(f.read(binary_len), dtype="float32")
+                words_found += 1
+            else:
+                f.read(binary_len)
+
+    print("Word Embeddings Extracted: {}".format(words_found))
+    print("Word Embeddings Randomly Initialized: {}".format(len(vocabulary) - words_found))
+
+    return embeddings
+
+
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
     Generates a batch iterator for the dataset.

@@ -73,34 +73,9 @@ del x, y, x_shuffled, y_shuffled  # don't need these anymore
 print("Vocabulary Size: {}".format(len(vocab_processor.vocabulary_)))
 print("Train/Test Split: {}/{}".format(len(y_train), len(y_test)))
 
-# Initialize embedding matrix from pre-trained word2vec embeddings. 0.25 is chosen so that unknown vectors
-# have (approximately) the same variance as pre-trained ones.
-embeddings = np.random.uniform(-0.25, 0.25, (len(vocab_processor.vocabulary_), embedding_dim))
-
 # Process Google News word2vec file (in a memory-friendly way) and store relevant embeddings.
 print("Loading pre-trained embeddings from {}...".format(embedding_file))
-words_found = 0
-with open(embedding_file, "rb") as f:
-    header = f.readline()
-    vocab_size, embedding_size = map(int, header.split())
-    binary_len = np.dtype("float32").itemsize * embedding_size
-    for line in range(vocab_size):
-        word = []
-        while True:
-            ch = f.read(1).decode("latin-1")
-            if ch == " ":
-                word = "".join(word)
-                break
-            if ch != "\n":
-                word.append(ch)
-        idx = vocab_processor.vocabulary_.get(word)
-        if idx != 0:
-            embeddings[idx] = np.fromstring(f.read(binary_len), dtype="float32")
-            words_found += 1
-        else:
-            f.read(binary_len)
-print("Word Embeddings Extracted: {}".format(words_found))
-print("Word Embeddings Randomly Initialized: {}".format(len(vocab_processor.vocabulary_) - words_found))
+embeddings = data.load_word2vec(embedding_file, vocab_processor.vocabulary_, embedding_dim, tf_VP=True)
 
 
 # Training
