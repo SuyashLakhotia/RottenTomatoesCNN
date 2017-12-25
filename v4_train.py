@@ -132,7 +132,7 @@ print("Word Embeddings Randomly Initialized: {}".format(len(train_vocab) - words
 
 # Process test data using the reduced train vocabulary
 vectorizer = sklearn.feature_extraction.text.CountVectorizer(vocabulary=train_vocab)
-x_test = vectorizer.fit_transform(x_test)
+x_test = vectorizer.transform(x_test)
 
 # Normalize data
 x_train = x_train.astype(np.float64)

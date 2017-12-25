@@ -53,4 +53,4 @@ bayes_clf = Pipeline([('vect', TfidfVectorizer()),
                       ('clf', MultinomialNB())])
 bayes_clf.fit(x_train, y_train)
 predicted = bayes_clf.predict(x_test)
-print('Naive Bayes Accuracy: {:.4f}'.format(np.mean(predicted == y_test)))
+print('Multinomial Naive Bayes Accuracy: {:.4f}'.format(np.mean(predicted == y_test)))
