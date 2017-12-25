@@ -37,6 +37,10 @@ y_train, y_test = y_shuffled[:test_sample_index], y_shuffled[test_sample_index:]
 y_train = np.argmax(y_train, 1)
 y_test = np.argmax(y_test, 1)
 
+
+# Training
+# ==================================================
+
 # Linear Support Vector Classifier
 svm_clf = Pipeline([('vect', TfidfVectorizer()),
                     ('clf',  LinearSVC())])

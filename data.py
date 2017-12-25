@@ -7,7 +7,7 @@ import numpy as np
 
 def clean_str(string):
     """
-    Tokenization & string cleaning for all datasets.
+    Tokenization & string cleaning.
     Original taken from https://github.com/yoonkim/CNN_sentence/blob/master/process_data.py
     """
     string = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", string)
@@ -28,8 +28,8 @@ def clean_str(string):
 
 def load_data_and_labels(positive_data_file, negative_data_file):
     """
-    Loads MR polarity data from files, splits the data into words and generates labels.
-    Returns split sentences and labels.
+    Loads MR polarity data from files, splits the data into words and generates the labels. Returns the 
+    split sentences and labels.
     """
     # Load data from files
     positive_examples = list(open(positive_data_file, "r", encoding="utf-8").readlines())
@@ -41,7 +41,7 @@ def load_data_and_labels(positive_data_file, negative_data_file):
     x_text = [clean_str(sent) for sent in x_text]
     # Convert to numpy array
     x_text = np.array(x_text)
-    # Generate labels
+    # Generate one-hot encoded label arrays
     positive_labels = [[0, 1] for _ in positive_examples]
     negative_labels = [[1, 0] for _ in negative_examples]
     y = np.concatenate([positive_labels, negative_labels], 0)
@@ -50,7 +50,7 @@ def load_data_and_labels(positive_data_file, negative_data_file):
 
 def batch_iter(data, batch_size, num_epochs, shuffle=True):
     """
-    Generates a batch iterator for a dataset.
+    Generates a batch iterator for the dataset.
     """
     data = np.array(data)
     data_size = len(data)
