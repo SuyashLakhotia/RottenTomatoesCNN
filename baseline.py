@@ -42,15 +42,15 @@ y_test = np.argmax(y_test, 1)
 # ==================================================
 
 # Linear Support Vector Classifier
-svm_clf = Pipeline([('vect', TfidfVectorizer()),
-                    ('clf',  LinearSVC())])
+svm_clf = Pipeline([("vect", TfidfVectorizer()),
+                    ("clf",  LinearSVC())])
 svm_clf.fit(x_train, y_train)
 predicted = svm_clf.predict(x_test)
-print('Linear SVC Accuracy: {:.4f}'.format(np.mean(predicted == y_test)))
+print("Linear SVC Accuracy: {:.4f}".format(np.mean(predicted == y_test)))
 
 # Multinomial Naive Bayes Classifier
-bayes_clf = Pipeline([('vect', TfidfVectorizer()),
-                      ('clf', MultinomialNB())])
+bayes_clf = Pipeline([("vect", TfidfVectorizer()),
+                      ("clf", MultinomialNB())])
 bayes_clf.fit(x_train, y_train)
 predicted = bayes_clf.predict(x_test)
-print('Multinomial Naive Bayes Accuracy: {:.4f}'.format(np.mean(predicted == y_test)))
+print("Multinomial Naive Bayes Accuracy: {:.4f}".format(np.mean(predicted == y_test)))

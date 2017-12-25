@@ -81,7 +81,7 @@ del x, y  # don't need these anymore
 # Build vocabulary and extract term-document matrices
 # TODO: tf-idf? Also change test data vectorizer.
 # TODO: sklearn.feature_extraction.text.TfidfVectorizer.html
-vectorizer = sklearn.feature_extraction.text.CountVectorizer(stop_words='english')
+vectorizer = sklearn.feature_extraction.text.CountVectorizer(stop_words="english")
 x_train = vectorizer.fit_transform(x_train)
 train_vocab = vectorizer.get_feature_names()
 
@@ -136,10 +136,10 @@ x_test = vectorizer.transform(x_test)
 
 # Normalize data
 x_train = x_train.astype(np.float64)
-x_train = sklearn.preprocessing.normalize(x_train, axis=1, norm='l1')
+x_train = sklearn.preprocessing.normalize(x_train, axis=1, norm="l1")
 x_train = x_train.astype(np.float32)
 x_test = x_test.astype(np.float64)
-x_test = sklearn.preprocessing.normalize(x_test, axis=1, norm='l1')
+x_test = sklearn.preprocessing.normalize(x_test, axis=1, norm="l1")
 x_test = x_test.astype(np.float32)
 
 
@@ -147,7 +147,7 @@ x_test = x_test.astype(np.float32)
 # ==================================================
 
 # Construct graph
-dist, idx = graph.distance_sklearn_metrics(embeddings, k=number_edges, metric='cosine')
+dist, idx = graph.distance_sklearn_metrics(embeddings, k=number_edges, metric="cosine")
 A = graph.adjacency(dist, idx)
 A = graph.replace_random_edges(A, 0)
 
