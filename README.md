@@ -100,6 +100,17 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 **Maximum Test Accuracy:** 74.20%
 -->
 
+<!--
+![](plots/v1/1514200974-Accuracy.png)
+
+- **Embedding Dimensionality:** 50
+- **Filter Sizes:** 3, 4, 5
+- **Number of Filters:** 10
+- **Dropout Keep Probability:** 0.5
+
+**Maximum Test Accuracy:** 72.51%
+-->
+
 ## Model v2: CNN w/ Pre-Trained Embeddings
 
 ### Model Description
