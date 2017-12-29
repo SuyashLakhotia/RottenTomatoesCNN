@@ -23,6 +23,8 @@ The data is shuffled and 10% of the dataset is used as the test set.
 
 ## Summary of Model Performance
 
+> **Disclaimer:** The preprocessing for each of the following models is not consistent and may have affected the accuracies. Please read each model's description (below) for further details.
+
 | **Model**                                         | **Test Accuracy** |
 |---------------------------------------------------|-------------------|
 | Multinomial Naive Bayes (TF-IDF Vectorized Input) | 77.58%            |
@@ -185,7 +187,7 @@ In Model v2 (default pre-trained embeddings), "bad" & "good" are considered simi
 
 Model v3 uses the pre-trained word embeddings (with fine-tuning) as in Model v2.1, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training.
 
-This model has a lot of trainable parameters and is probably not practical but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining the 2D grid needed for convolution operations.
+This model has a lot of trainable parameters and is probably **not practical** but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining the 2D grid needed for convolution operations.
 
 ### Model Performance
 
