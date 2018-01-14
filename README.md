@@ -29,9 +29,9 @@ The data is shuffled and 10% of the dataset is used as the test set.
 |---------------------------------------------------|-------------------|
 | Multinomial Naive Bayes (TF-IDF Vectorized Input) | 77.58%            |
 | Model v1 (CNN)                                    | 74.30%            |
-| Model v2.1 (CNN w/ Pre-Trained Embeddings)        | 80.21%            |
-| Model v3 (CNN on Similarity Matrix)               | 75.61%            |
-| Model v4 (Graph CNN)                              | 75.14%            |
+| Model v1.2 (CNN w/ Pre-Trained Embeddings)        | 80.21%            |
+| Model v2 (CNN on Similarity Matrix)               | 75.61%            |
+| Model v3 (Graph CNN)                              | 75.14%            |
 
 ## Model v0: Baseline Models
 
@@ -39,9 +39,9 @@ The data is shuffled and 10% of the dataset is used as the test set.
 
 In order to establish a baseline for the more complex models below, three simple baseline models were implemented (given below with their respective test accuracies):
 
-1. Linear SVC (TF-IDF Vectorized Input): 76.74%
-2. Multinomial Naive Bayes (TF-IDF Vectorized Input): 77.58%
-3. Linear SVC (Mean of Pre-Trained Word Embeddings): 75.52%
+1. **Linear SVC (TF-IDF Vectorized Input):** 76.74%
+2. **Multinomial Naive Bayes (TF-IDF Vectorized Input):** 77.58%
+3. **Linear SVC (Mean of Pre-Trained Word Embeddings):** 75.52%
 
 ## Model v1: Convolutional Neural Network
 
@@ -55,7 +55,7 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 
 #### Computational Graph
 
-![](graphs/v1_Graph_Compressed.png)
+<img src="graphs/v1_Graph_Compressed.png" height="500px"/>
 
 #### Hyperparameters
 
@@ -113,21 +113,17 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 **Maximum Test Accuracy:** 72.51%
 -->
 
-## Model v2: CNN w/ Pre-Trained Embeddings
+## Model v1.1: CNN w/ Pre-Trained Embeddings
 
 ### Model Description
 
-> The code for the model can be found in `text_cnn.py`.
+Model v1.1 is nearly identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`) instead of learning the embeddings from the dataset. The embeddings of 2,310 words not present in `word2vec` are randomly initialized and all embeddings are kept static during training.
 
-Model v2 is nearly identical to Model v1, except that it uses pre-trained word embeddings (Google's `word2vec`) instead of learning the embeddings from the dataset. The embeddings of 2,310 words not present in `word2vec` are randomly initialized and all embeddings are kept static during training.
-
-The details of these pre-trained embeddings can be found [here](https://code.google.com/archive/p/word2vec/) and the actual file can be downloaded [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit). The embeddings are processed in `v2_train.py`.
+The details of these pre-trained embeddings can be found [here](https://code.google.com/archive/p/word2vec/) and the actual file can be downloaded [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit). The embeddings are loaded using `data.load_word2vec()`.
 
 ### Model Performance
 
-> The code for training can be found in `v2_train.py`.
-
-![](plots/v2/1507798871-Accuracy.png)
+![](plots/v1.1/1507798871-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
@@ -138,13 +134,13 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 
 This model performed better than Model v1 (~5% increase in accuracy), which suggests that learning the word embeddings from the relatively smaller movie review dataset is not ideal.
 
-## Model v2.1: CNN w/ Fine-Tuned Pre-Trained Embeddings
+## Model v1.2: CNN w/ Fine-Tuned Pre-Trained Embeddings
 
-Model v2.1 improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained embeddings during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `text_cnn.py`.
+Model v1.2 improves upon Model v1.1 by fine-tuning (i.e. learning) the pre-trained embeddings during training. This is done by setting `trainable=True` (or removing the argument altogether) for the embedding matrix in `text_cnn.py`.
 
 ### Model Performance
 
-![](plots/v2.1/1507803080-Accuracy.png)
+![](plots/v1.2/1507803080-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
@@ -153,7 +149,9 @@ Model v2.1 improves upon Model v2 by fine-tuning (i.e. learning) the pre-trained
 
 **Maximum Test Accuracy:** 80.21% <!-- 0.802064 -->
 
-There is only a slight increase in accuracy, however, an interesting observation is that the model is more prone to overfitting when learning the embeddings (training accuracy is almost consistently 100% towards the end) as opposed to Model v2, which never *consistently* had a 100% training accuracy.
+There is only a slight increase in accuracy, however, an interesting observation is that the model is more prone to overfitting when learning the embeddings (training accuracy is almost consistently 100% towards the end) as opposed to Model v1.1, which never *consistently* had a 100% training accuracy.
+
+<!--
 
 ### Advantages of Tuning Pre-Trained Embeddings
 
@@ -166,34 +164,36 @@ In order to better understand why fine-tuning embeddings learned on a massive da
 **`good`:**
 
 ```
-v2.0: ['good', 'great', 'bad', 'terrific', 'decent', 'nice', 'excellent', 'fantastic', 'better', 'solid']
-v2.1: ['good', 'terrific', 'decent', 'great', 'nice', 'solid', 'fantastic', 'excellent', 'better', 'wonderful']
+v1.1.0: ['good', 'great', 'bad', 'terrific', 'decent', 'nice', 'excellent', 'fantastic', 'better', 'solid']
+v1.2: ['good', 'terrific', 'decent', 'great', 'nice', 'solid', 'fantastic', 'excellent', 'better', 'wonderful']
 ```
 
 **`bad`:**
 
 ```
-v2.0: ['bad', 'good', 'terrible', 'horrible', 'lousy', 'crummy', 'horrid', 'awful', 'dreadful', 'nasty']
-v2.1: ['bad', 'horrible', 'terrible', 'lousy', 'awful', 'nasty', 'crummy', 'rotten', 'crappy', 'scary']
+v1.1.0: ['bad', 'good', 'terrible', 'horrible', 'lousy', 'crummy', 'horrid', 'awful', 'dreadful', 'nasty']
+v1.2: ['bad', 'horrible', 'terrible', 'lousy', 'awful', 'nasty', 'crummy', 'rotten', 'crappy', 'scary']
 ```
 
-In Model v2 (default pre-trained embeddings), "bad" & "good" are considered similar words perhaps due to their syntactical purpose, however, they mean completely different things for the task at hand and this is reflected in the embeddings learned in Model v2.1.
+In Model v1.1 (default pre-trained embeddings), "bad" & "good" are considered similar words perhaps due to their syntactical purpose, however, they mean completely different things for the task at hand and this is reflected in the embeddings learned in Model v1.2.
 
-## Model v3: Similarity Matrix CNN
+-->
+
+## Model v2: Similarity Matrix CNN
 
 ### Model Description
 
 > The code for the model can be found in `text_similarity_cnn.py`.
 
-Model v3 uses the pre-trained word embeddings (with fine-tuning) as in Model v2.1, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training.
+Model v2 uses the pre-trained word embeddings (with fine-tuning) as in Model v1.2, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training. The hyperparameters remain the same as Model v1.
 
 This model has a lot of trainable parameters and is probably **not practical** but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining the 2D grid needed for convolution operations.
 
 ### Model Performance
 
-> The code for training can be found in `v3_train.py`.
+> The code for training can be found in `v2_train.py`.
 
-![](plots/v3/1513349213-Accuracy.png)
+![](plots/v2/1513349213-Accuracy.png)
 
 - **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **Filter Sizes:** 3, 4, 5
@@ -202,36 +202,32 @@ This model has a lot of trainable parameters and is probably **not practical** b
 
 **Maximum Test Accuracy:** 75.61% <!-- 0.756098 -->
 
-## Model v4: Graph CNN
+## Model v3: Graph CNN
 
 ### Model Description
 
 > The code for the model can be found in `text_gcnn.py`.
 
-Model v4 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model, normalized across words.
+Model v3 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model, normalized across words.
 
 ### Model Performance
 
-> The code for training can be found in `v4_train.py`.
+> The code for training can be found in `v3_train.py`.
 
-![](plots/v4/1513940188-Accuracy.png)
+![](plots/v3/1513940188-Accuracy.png)
 
-<!--
-- **Embedding Dimensionality:** 300
+- **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **No. of Nearest Neighbors:** 16
--->
 - **Coarsening Levels:** 0
 - **Chebyshev Polynomial Order(s):** 5
 - **No. of Output Features per Vertex:** 32
 - **Pooling Size(s):** 1 (no pooling)
-<!--
 - **Dropout Keep Probability:** 0.5
--->
 
 **Maximum Test Accuracy:** 75.14% <!-- 0.751407146 -->
 
 <!--
-![](plots/v4/1513510373-Accuracy.png)
+![](plots/v3/1513510373-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
@@ -249,7 +245,7 @@ Model v4 is a graph convolutional neural network based on the [paper](https://ar
 
 > Similar architecture to previous models with three convolutional layers in parallel whose outputs are concatenated.
 
-![](plots/v4/1513697965-Accuracy.png)
+![](plots/v3/1513697965-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **No. of Nearest Neighbors:** 16
