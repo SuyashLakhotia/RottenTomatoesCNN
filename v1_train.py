@@ -18,8 +18,16 @@ test_sample_percentage = 0.1  # percentage of training data to use for testing
 positive_data_file = "data/rt-polarity.pos"
 negative_data_file = "data/rt-polarity.neg"
 
+# Pre-trained word embeddings
+pre_trained = True
+embedding_dim = 300  # dimensionality of embedding
+embedding_file = "data/GoogleNews-vectors-negative300.bin"  # word embeddings file
+
+# Learn word embeddings
+# pre_trained = False
+# embedding_dim = 128
+
 # Model parameters
-embedding_dim = 128  # dimensionality of embedding
 filter_heights = "3,4,5"  # comma-separated filter heights
 num_features = 128  # number of features per filter
 
@@ -70,6 +78,13 @@ del x, y, x_shuffled, y_shuffled  # don't need these anymore
 print("Vocabulary Size: {}".format(len(vocab_processor.vocabulary_)))
 print("Train/Test Split: {}/{}".format(len(y_train), len(y_test)))
 
+if pre_trained:
+    # Process Google News word2vec file (in a memory-friendly way) and store relevant embeddings.
+    print("Loading pre-trained embeddings from {}...".format(embedding_file))
+    embeddings = data.load_word2vec(embedding_file, vocab_processor.vocabulary_, embedding_dim, tf_VP=True)
+else:
+    embeddings = None
+
 
 # Training
 # ==================================================
@@ -83,7 +98,7 @@ with tf.Graph().as_default():
                       num_classes=y_train.shape[1],
                       vocab_size=len(vocab_processor.vocabulary_),
                       embedding_size=embedding_dim,
-                      embeddings=None,
+                      embeddings=embeddings,
                       filter_heights=list(map(int, filter_heights.split(","))),
                       num_features=num_features,
                       l2_reg_lambda=l2_reg_lambda)

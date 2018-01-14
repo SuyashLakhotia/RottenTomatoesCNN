@@ -5,9 +5,13 @@ import datetime
 import numpy as np
 import tensorflow as tf
 from tensorflow.contrib import learn
+import scipy.sparse
+import sklearn.datasets
+import sklearn.metrics
 
 import data
-from text_similarity_cnn import TextSimilarityCNN
+from text_gcnn import GraphCNN
+from gcnn import graph, coarsening
 
 
 # Parameters
@@ -22,9 +26,17 @@ negative_data_file = "data/rt-polarity.neg"
 embedding_dim = 300  # dimensionality of embedding
 embedding_file = "data/GoogleNews-vectors-negative300.bin"  # word embeddings file
 
+# Preprocessing parameters
+num_frequent_words = 5000  # number of frequent words to retain
+
+# Feature graph parameters
+number_edges = 16
+coarsening_levels = 0
+
 # Model parameters
-filter_heights = "3,4,5"  # comma-separated filter heights
-num_features = 128  # number of features per filter
+polynomial_orders = [5]  # Chebyshev polynomial orders (i.e. filter sizes)
+num_features = [32]  # number of features per GCL
+pooling_sizes = [1]  # pooling sizes (1 (no pooling) or power of 2)
 
 # Training parameters
 learning_rate = 1e-3
@@ -49,33 +61,80 @@ log_device_placement = False  # log placement of operations on devices
 
 # Load data
 print("Loading data...")
-x_text, y = data.load_data_and_labels(positive_data_file, negative_data_file)
-
-# Build vocabulary
-max_document_length = max([len(x.split(" ")) for x in x_text])
-vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length)
-x = np.array(list(vocab_processor.fit_transform(x_text)))
+x, y = data.load_data_and_labels(positive_data_file, negative_data_file)
+max_document_length = max([len(x_i.split(" ")) for x_i in x])
 print("Max. Sentence Length: {}".format(max_document_length))
 
 # Randomly shuffle data
 np.random.seed(10)
 shuffle_indices = np.random.permutation(np.arange(len(y)))
-x_shuffled = x[shuffle_indices]
-y_shuffled = y[shuffle_indices]
+x = x[shuffle_indices]
+y = y[shuffle_indices]
 
 # Split train/test set
 test_sample_index = -1 * int(test_sample_percentage * float(len(y)))
-x_train, x_test = x_shuffled[:test_sample_index], x_shuffled[test_sample_index:]
-y_train, y_test = y_shuffled[:test_sample_index], y_shuffled[test_sample_index:]
+x_train, x_test = x[:test_sample_index], x[test_sample_index:]
+y_train, y_test = y[:test_sample_index], y[test_sample_index:]
 
-del x, y, x_shuffled, y_shuffled  # don't need these anymore
+del x, y  # don't need these anymore
 
-print("Vocabulary Size: {}".format(len(vocab_processor.vocabulary_)))
+# Build vocabulary and extract term-document matrices
+# TODO: tf-idf? Also change test data vectorizer.
+# TODO: sklearn.feature_extraction.text.TfidfVectorizer.html
+vectorizer = sklearn.feature_extraction.text.CountVectorizer(stop_words="english")
+x_train = vectorizer.fit_transform(x_train)
+train_vocab = vectorizer.get_feature_names()
+
+print("Vocabulary Size: {}".format(len(train_vocab)))
 print("Train/Test Split: {}/{}".format(len(y_train), len(y_test)))
+
+# Keep only N most-frequent words in data, vocabulary & embeddings
+word_freqs = x_train.sum(axis=0)
+word_freqs = np.squeeze(np.asarray(word_freqs))
+freq_idx = np.argsort(word_freqs)[::-1]
+freq_idx = freq_idx[:num_frequent_words]
+x_train = x_train[:, freq_idx]
+train_vocab = [train_vocab[i] for i in freq_idx]
+
+print("Vocabulary Size (Reduced): {}".format(len(train_vocab)))
+
+# Construct reverse lookup vocabulary
+reverse_vocab = {k: v for v, k in enumerate(train_vocab)}
 
 # Process Google News word2vec file (in a memory-friendly way) and store relevant embeddings.
 print("Loading pre-trained embeddings from {}...".format(embedding_file))
-embeddings = data.load_word2vec(embedding_file, vocab_processor.vocabulary_, embedding_dim, tf_VP=True)
+embeddings = data.load_word2vec(embedding_file, reverse_vocab, embedding_dim, tf_VP=False)
+
+# Process test data using the reduced train vocabulary
+vectorizer = sklearn.feature_extraction.text.CountVectorizer(vocabulary=train_vocab)
+x_test = vectorizer.transform(x_test)
+
+# Normalize data
+x_train = x_train.astype(np.float64)
+x_train = sklearn.preprocessing.normalize(x_train, axis=1, norm="l1")
+x_train = x_train.astype(np.float32)
+x_test = x_test.astype(np.float64)
+x_test = sklearn.preprocessing.normalize(x_test, axis=1, norm="l1")
+x_test = x_test.astype(np.float32)
+
+
+# Feature Graph
+# ==================================================
+
+# Construct graph
+dist, idx = graph.distance_sklearn_metrics(embeddings, k=number_edges, metric="cosine")
+A = graph.adjacency(dist, idx)
+A = graph.replace_random_edges(A, 0)
+
+# Compute coarsened graphs
+graphs, perm = coarsening.coarsen(A, levels=coarsening_levels, self_connections=False)
+L = [graph.laplacian(A, normalized=True) for A in graphs]
+
+del embeddings, dist, idx, A, graphs  # don't need these anymore
+
+# Reindex nodes to satisfy a binary tree structure
+x_train = scipy.sparse.csr_matrix(coarsening.perm_data(x_train.toarray(), perm))
+x_test = scipy.sparse.csr_matrix(coarsening.perm_data(x_test.toarray(), perm))
 
 
 # Training
@@ -86,14 +145,11 @@ with tf.Graph().as_default():
                                   log_device_placement=log_device_placement)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
-        cnn = TextSimilarityCNN(sequence_length=x_train.shape[1],
-                                num_classes=y_train.shape[1],
-                                vocab_size=len(vocab_processor.vocabulary_),
-                                embedding_size=embedding_dim,
-                                embeddings=embeddings,
-                                filter_heights=list(map(int, filter_heights.split(","))),
-                                num_features=num_features,
-                                l2_reg_lambda=l2_reg_lambda)
+        cnn = GraphCNN(L=L, K=polynomial_orders, F=num_features, p=pooling_sizes,
+                       batch_size=batch_size,
+                       num_vertices=x_train.shape[1],
+                       num_classes=y_train.shape[1],
+                       l2_reg_lambda=l2_reg_lambda)
 
         # Define training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
@@ -125,8 +181,7 @@ with tf.Graph().as_default():
         train_summary_dir = os.path.join(out_dir, "summaries", "train")
         train_summary_writer = tf.summary.FileWriter(train_summary_dir, sess.graph)
 
-        # Test Summaries
-        test_summary_op = tf.summary.merge([loss_summary, acc_summary])
+        # Test Summary Writer
         test_summary_dir = os.path.join(out_dir, "summaries", "test")
         test_summary_writer = tf.summary.FileWriter(test_summary_dir, sess.graph)
 
@@ -136,9 +191,6 @@ with tf.Graph().as_default():
         if not os.path.exists(checkpoint_dir):
             os.makedirs(checkpoint_dir)
         saver = tf.train.Saver(tf.global_variables(), max_to_keep=num_checkpoints)
-
-        # Write vocabulary
-        vocab_processor.save(os.path.join(out_dir, "vocab"))
 
         # Initialize all variables
         sess.run(tf.global_variables_initializer())
@@ -159,23 +211,58 @@ with tf.Graph().as_default():
             print("{}: Step {}, Loss {:g}, Accuracy {:g}".format(time_str, step, loss, accuracy))
             train_summary_writer.add_summary(summaries, step)
 
-        def test_step(x_batch, y_batch, writer=None):
+        def test_step(x_test, y_test, writer=None):
             """
             Evaluates model on a test set.
             """
-            feed_dict = {
-                cnn.input_x: x_batch,
-                cnn.input_y: y_batch,
-                cnn.dropout_keep_prob: 1.0
-            }
-            step, summaries, loss, accuracy = sess.run([global_step, test_summary_op, cnn.loss,
-                                                        cnn.accuracy],
-                                                       feed_dict)
+            # TODO: Hacky workaround to test model since batch_size is fixed. Arbitrary batch_sizes are
+            # causing issues with Tensor shapes in the model.
+            step = 0
+            size = x_test.shape[0]
+            losses = 0
+            predictions = np.empty(size)
+            for begin in range(0, size, batch_size):
+                end = begin + batch_size
+                end = min([end, size])
+
+                x_batch = np.zeros((batch_size, x_test.shape[1]))
+                x_batch[:end - begin] = x_test[begin:end]
+
+                y_batch = np.zeros((batch_size, y_test.shape[1]))
+                y_batch[:end - begin] = y_test[begin:end]
+
+                feed_dict = {
+                    cnn.input_x: x_batch,
+                    cnn.input_y: y_batch,
+                    cnn.dropout_keep_prob: 1.0
+                }
+                step, batch_pred, batch_loss = sess.run([global_step, cnn.predictions, cnn.loss],
+                                                        feed_dict)
+
+                predictions[begin:end] = batch_pred[:end - begin]
+                losses += batch_loss
+
+            accuracy = sklearn.metrics.accuracy_score(np.argmax(y_test, 1), predictions)
+            loss = losses * batch_size / size
+
             time_str = datetime.datetime.now().isoformat()
             print("{}: Step {}, Loss {:g}, Accuracy {:g}".format(time_str, step, loss, accuracy))
+
+            summary = tf.Summary()
+            summary.value.add(tag="loss_1", simple_value=loss)
+            summary.value.add(tag="accuracy_1", simple_value=accuracy)
+
             if writer:
-                writer.add_summary(summaries, step)
+                writer.add_summary(summary, step)
             return accuracy
+
+        # Convert sparse matrices to arrays
+        # TODO: Is there a workaround for this? Doesn't seem memory efficient.
+        # TODO: https://github.com/tensorflow/tensorflow/issues/342#issuecomment-160354041
+        # TODO: https://github.com/tensorflow/tensorflow/issues/342#issuecomment-273463729
+        # TODO: https://stackoverflow.com/questions/37001686/using-sparsetensor-as-a-trainable-variable
+        x_train = np.squeeze([x_i.toarray() for x_i in x_train])
+        x_test = np.squeeze([x_i.toarray() for x_i in x_test])
 
         # Generate batches
         batches = data.batch_iter(list(zip(x_train, y_train)), batch_size, num_epochs)

@@ -64,26 +64,26 @@ vocab_dict = vocab_processor.vocabulary_._mapping
 sorted_vocab = sorted(vocab_dict.items(), key=lambda x: x[1])
 vocabulary = list(list(zip(*sorted_vocab))[0])  # list of words in vocabulary
 
-# Restore model v2
+# Restore model v1.1
 sess = tf.Session()
-saver = tf.train.import_meta_graph("runs/v2/1507798871/checkpoints/model-7100.meta")
-saver.restore(sess, tf.train.latest_checkpoint("runs/v2/1507798871/checkpoints/."))
+saver = tf.train.import_meta_graph("runs/v1/1507798871/checkpoints/model-7100.meta")
+saver.restore(sess, tf.train.latest_checkpoint("runs/v1/1507798871/checkpoints/."))
 
 # Get embedding matrix
-embeddings_v2 = sess.run("embedding/W:0")
+embeddings_v1_1 = sess.run("embedding/W:0")
 
-# Restore model v2.1
+# Restore model v1.2
 sess = tf.Session()
-saver = tf.train.import_meta_graph("runs/v2/1513692784/checkpoints/model-5000.meta")
-saver.restore(sess, tf.train.latest_checkpoint("runs/v2/1513692784/checkpoints/."))
+saver = tf.train.import_meta_graph("runs/v1/1513692784/checkpoints/model-5000.meta")
+saver.restore(sess, tf.train.latest_checkpoint("runs/v1/1513692784/checkpoints/."))
 
 # Get embedding matrix
-embeddings_v2_1 = sess.run("embedding/W:0")
+embeddings_v1_2 = sess.run("embedding/W:0")
 
 # Embeddings array
 embeddings_arr = []
-embeddings_arr.append(embeddings_v2)
-embeddings_arr.append(embeddings_v2_1)
+embeddings_arr.append(embeddings_v1_1)
+embeddings_arr.append(embeddings_v1_2)
 
 # Compare words
 compare_similar_words(10, "good", vocab_processor.vocabulary_, embeddings_arr)

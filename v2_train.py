@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow.contrib import learn
 
 import data
-from text_cnn import TextCNN
+from text_similarity_cnn import TextSimilarityCNN
 
 
 # Parameters
@@ -86,14 +86,14 @@ with tf.Graph().as_default():
                                   log_device_placement=log_device_placement)
     sess = tf.Session(config=session_conf)
     with sess.as_default():
-        cnn = TextCNN(sequence_length=x_train.shape[1],
-                      num_classes=y_train.shape[1],
-                      vocab_size=len(vocab_processor.vocabulary_),
-                      embedding_size=embedding_dim,
-                      embeddings=embeddings,
-                      filter_heights=list(map(int, filter_heights.split(","))),
-                      num_features=num_features,
-                      l2_reg_lambda=l2_reg_lambda)
+        cnn = TextSimilarityCNN(sequence_length=x_train.shape[1],
+                                num_classes=y_train.shape[1],
+                                vocab_size=len(vocab_processor.vocabulary_),
+                                embedding_size=embedding_dim,
+                                embeddings=embeddings,
+                                filter_heights=list(map(int, filter_heights.split(","))),
+                                num_features=num_features,
+                                l2_reg_lambda=l2_reg_lambda)
 
         # Define training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
