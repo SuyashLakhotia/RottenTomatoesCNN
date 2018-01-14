@@ -62,10 +62,8 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - `embedding_size`: The dimensionality of the embeddings (lower-dimensional vector representations of the vocabulary indices).
 - `filter_sizes`: The number of words the convolutional filters should cover. For example, `[3, 4, 5]` will create filters that slide over 3, 4 and 5 words respectively.
 - `num_filters`: The number of filters per filter size.
-- `dropout_keep_prob`: Probability of keeping a neuron in the dropout layer.
+- `dropout_keep_prob`: Probability of keeping a neuron in the dropout layer. Default is 0.5.
 - `l2_reg_lambda`: L2 regularization term. Default is 0.
-
-> **NOTE:** Does not include other training parameters like learning rate, batch size etc.
 
 ### Model Performance
 
@@ -76,7 +74,6 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Embedding Dimensionality:** 128
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
-- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 74.30%
 
@@ -86,7 +83,6 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Embedding Dimensionality:** 128
 - **Filter Sizes:** 4
 - **Number of Filters:** 128
-- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 74.58%
 -->
@@ -97,7 +93,6 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Embedding Dimensionality:** 128
 - **Filter Sizes:** 7
 - **Number of Filters:** 128
-- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 74.20%
 -->
@@ -108,7 +103,6 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Embedding Dimensionality:** 50
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 10
-- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 72.51%
 -->
@@ -128,7 +122,6 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
-- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 79.00% <!-- 0.789869 -->
 
@@ -145,7 +138,6 @@ Model v1.2 improves upon Model v1.1 by fine-tuning (i.e. learning) the pre-train
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
-- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 80.21% <!-- 0.802064 -->
 
@@ -185,7 +177,7 @@ In Model v1.1 (default pre-trained embeddings), "bad" & "good" are considered si
 
 > The code for the model can be found in `text_similarity_cnn.py`.
 
-Model v2 uses the pre-trained word embeddings (with fine-tuning) as in Model v1.2, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training. The hyperparameters remain the same as Model v1.
+Model v2 uses the pre-trained word embeddings (with fine-tuning) as in Model v1.2, however, the input given to the network is not the `56 x 300` embedded matrix but rather a `56 x 18758` matrix where each word is represented by a vector that contains the cosine similarity of the word to every other word in the vocabulary. These similarity vectors are re-calculated at every iteration (using [this method](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/word2vec/word2vec_basic.py#L192)) as the embeddings are fine-tuned during training. The overall model architecture & hyperparameters involved remain the same as Model v1.
 
 This model has a lot of trainable parameters and is probably **not practical** but helps represent the words in a graph-like structure using slices of the graph's similarity matrix while retaining the 2D grid needed for convolution operations.
 
@@ -198,7 +190,6 @@ This model has a lot of trainable parameters and is probably **not practical** b
 - **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
-- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 75.61% <!-- 0.756098 -->
 
@@ -209,6 +200,10 @@ This model has a lot of trainable parameters and is probably **not practical** b
 > The code for the model can be found in `text_gcnn.py`.
 
 Model v3 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model, normalized across words.
+
+#### Computational Graph
+
+<img src="graphs/v3_Graph_Compressed.png" height="500px"/>
 
 ### Model Performance
 
