@@ -79,9 +79,7 @@ y_train, y_test = y[:test_sample_index], y[test_sample_index:]
 del x, y  # don't need these anymore
 
 # Build vocabulary and extract term-document matrices
-# TODO: tf-idf? Also change test data vectorizer.
-# TODO: sklearn.feature_extraction.text.TfidfVectorizer.html
-vectorizer = sklearn.feature_extraction.text.CountVectorizer(stop_words="english")
+vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(stop_words="english")
 x_train = vectorizer.fit_transform(x_train)
 train_vocab = vectorizer.get_feature_names()
 
@@ -106,8 +104,8 @@ print("Loading pre-trained embeddings from {}...".format(embedding_file))
 embeddings = data.load_word2vec(embedding_file, reverse_vocab, embedding_dim, tf_VP=False)
 
 # Process test data using the reduced train vocabulary
-vectorizer = sklearn.feature_extraction.text.CountVectorizer(vocabulary=train_vocab)
-x_test = vectorizer.transform(x_test)
+vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(vocabulary=train_vocab)
+x_test = vectorizer.fit_transform(x_test)
 
 # Normalize data
 x_train = x_train.astype(np.float64)
