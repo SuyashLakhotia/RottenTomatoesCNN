@@ -23,19 +23,19 @@ The dataset used is Pang and Lee's movie review sentiment polarity dataset (`sen
 |---------------------------------------------------|-------------------|
 | Multinomial Naive Bayes (TF-IDF Vectorized Input) | 77.58%            |
 | Model v1 (CNN)                                    | 74.30%            |
-| Model v1.2 (CNN w/ Pre-Trained Embeddings)        | 80.21%            |
+| Model v1.2 (CNN w/ Pre-Trained Embeddings)        | 79.46%            |
 | Model v2 (CNN on Similarity Vectors)              | 75.61%            |
-| Model v3 (Graph CNN)                              | 75.14%            |
+| Model v3 (Graph CNN)                              | 76.17%            |
 
 ## Model v0: Baseline Models
 
 > The code for the model & training can be found in `baseline.py` & `baseline_embeddings.py`.
 
-In order to establish a baseline for the more complex models below, three simple baseline models were implemented (given below with their respective test accuracies):
+In order to establish a baseline for the more complex models below, three simple models were implemented (given below with their respective test accuracies):
 
-1. **Linear SVC (TF-IDF Vectorized Input):** 76.74%
-2. **Multinomial Naive Bayes (TF-IDF Vectorized Input):** 77.58%
-3. **Linear SVC (Mean of Pre-Trained Word Embeddings):** 75.52%
+1. Linear SVC (TF-IDF Vectorized Input): 76.74%
+2. **Multinomial Naive Bayes (TF-IDF Vectorized Input): 77.58%**
+3. Linear SVC (Mean of Pre-Trained Word Embeddings): 76.27%
 
 ## Model v1: Convolutional Neural Network
 
@@ -51,14 +51,6 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 
 <img src="graphs/v1_Graph_Compressed.png" height="500px"/>
 
-#### Hyperparameters
-
-- `embedding_size`: The dimensionality of the embeddings (lower-dimensional vector representations of the vocabulary indices).
-- `filter_sizes`: The number of words the convolutional filters should cover. For example, `[3, 4, 5]` will create filters that slide over 3, 4 and 5 words respectively.
-- `num_filters`: The number of filters per filter size.
-- `dropout_keep_prob`: Probability of keeping a neuron in the dropout layer. Default is 0.5.
-- `l2_reg_lambda`: L2 regularization term. Default is 0.
-
 ### Model Performance
 
 > The code for training can be found in `v1_train.py`.
@@ -68,6 +60,7 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Embedding Dimensionality:** 128
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 74.30%
 
@@ -77,18 +70,9 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Embedding Dimensionality:** 128
 - **Filter Sizes:** 4
 - **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 74.58%
--->
-
-<!--
-![](plots/v1/1513756469-Accuracy.png)
-
-- **Embedding Dimensionality:** 128
-- **Filter Sizes:** 7
-- **Number of Filters:** 128
-
-**Maximum Test Accuracy:** 74.20%
 -->
 
 <!--
@@ -97,6 +81,7 @@ The model consists of an embedding layer followed by multiple parallel convoluti
 - **Embedding Dimensionality:** 50
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 10
+- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 72.51%
 -->
@@ -116,8 +101,9 @@ The details of these pre-trained embeddings can be found [here](https://code.goo
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
 
-**Maximum Test Accuracy:** 79.00% <!-- 0.789869 -->
+**Maximum Test Accuracy:** 78.99% <!-- 0.789868653 -->
 
 This model performed better than Model v1 (~5% increase in accuracy), which suggests that learning the word embeddings from the relatively smaller movie review dataset is not ideal.
 
@@ -127,13 +113,14 @@ Model v1.2 improves upon Model v1.1 by fine-tuning (i.e. learning) the pre-train
 
 ### Model Performance
 
-![](plots/v1.2/1507803080-Accuracy.png)
+![](plots/v1.2/1513692784-Accuracy.png)
 
 - **Embedding Dimensionality:** 300
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
 
-**Maximum Test Accuracy:** 80.21% <!-- 0.802064 -->
+**Maximum Test Accuracy:** 79.46% <!-- 0.794559121 -->
 
 There is only a slight increase in accuracy, however, an interesting observation is that the model is more prone to overfitting when learning the embeddings (training accuracy is almost consistently 100% towards the end) as opposed to Model v1.1, which never *consistently* had a 100% training accuracy.
 
@@ -184,6 +171,7 @@ This model has a lot of trainable parameters and is probably **not practical** b
 - **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **Filter Sizes:** 3, 4, 5
 - **Number of Filters:** 128
+- **Dropout Keep Probability:** 0.5
 
 **Maximum Test Accuracy:** 75.61% <!-- 0.756098 -->
 
@@ -193,7 +181,7 @@ This model has a lot of trainable parameters and is probably **not practical** b
 
 > The code for the model can be found in `text_gcnn.py`.
 
-Model v3 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented using the bag-of-words model, normalized across words.
+Model v3 is a graph convolutional neural network based on the [paper](https://arxiv.org/abs/1606.09375) & [code](https://github.com/mdeff/cnn_graph) by Michael Defferrard, Xavier Bresson & Pierre Vandergheynst. The graph is a 16-NN graph constructed from the pre-trained word embeddings of the 5,000 most frequent words in the vocabulary and each sentence (i.e. pattern) is represented by its TF-IDF vector.
 
 #### Computational Graph
 
@@ -203,7 +191,7 @@ Model v3 is a graph convolutional neural network based on the [paper](https://ar
 
 > The code for training can be found in `v3_train.py`.
 
-![](plots/v3/1513940188-Accuracy.png)
+![](plots/v3/1516618429-Accuracy.png)
 
 - **Embedding Dimensionality:** 300 (Google's `word2vec`)
 - **No. of Nearest Neighbors:** 16
@@ -213,39 +201,7 @@ Model v3 is a graph convolutional neural network based on the [paper](https://ar
 - **Pooling Size(s):** 1 (no pooling)
 - **Dropout Keep Probability:** 0.5
 
-**Maximum Test Accuracy:** 75.14% <!-- 0.751407146 -->
-
-<!--
-![](plots/v3/1513510373-Accuracy.png)
-
-- **Embedding Dimensionality:** 300
-- **No. of Nearest Neighbors:** 16
-- **Coarsening Levels:** 0
-- **Chebyshev Polynomial Order(s):** 4
-- **No. of Output Features per Vertex:** 128
-- **Pooling Size(s):** 1 (no pooling)
-- **Dropout Keep Probability:** 0.5
-
-**Maximum Test Accuracy:** 74.77%  // 0.747655
--->
-
-<!--
-#### Multiple GCL (Parallel)
-
-> Similar architecture to previous models with three convolutional layers in parallel whose outputs are concatenated.
-
-![](plots/v3/1513697965-Accuracy.png)
-
-- **Embedding Dimensionality:** 300
-- **No. of Nearest Neighbors:** 16
-- **Coarsening Levels:** 0
-- **Chebyshev Polynomial Order(s):** 3, 4, 5
-- **No. of Output Features per Vertex:** 128, 128, 128
-- **Pooling Size(s):** 1, 1, 1
-- **Dropout Keep Probability:** 0.5
-
-**Maximum Test Accuracy:** 74.58%  // 0.74577862
--->
+**Maximum Test Accuracy:** 76.17% <!-- 0.761726081 -->
 
 ---
 
