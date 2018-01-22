@@ -53,28 +53,7 @@ embeddings = np.random.uniform(-0.25, 0.25, (len(vocab_processor.vocabulary_), e
 
 # Process Google News word2vec file (in a memory-friendly way) and store relevant embeddings.
 print("Loading pre-trained embeddings from {}...".format(embedding_file))
-words_found = 0
-with open(embedding_file, "rb") as f:
-    header = f.readline()
-    vocab_size, embedding_size = map(int, header.split())
-    binary_len = np.dtype("float32").itemsize * embedding_size
-    for line in range(vocab_size):
-        word = []
-        while True:
-            ch = f.read(1).decode("latin-1")
-            if ch == " ":
-                word = "".join(word)
-                break
-            if ch != "\n":
-                word.append(ch)
-        idx = vocab_processor.vocabulary_.get(word)
-        if idx != 0:
-            embeddings[idx] = np.fromstring(f.read(binary_len), dtype="float32")
-            words_found += 1
-        else:
-            f.read(binary_len)
-print("Word Embeddings Extracted: {}".format(words_found))
-print("Word Embeddings Randomly Initialized: {}".format(len(vocab_processor.vocabulary_) - words_found))
+embeddings = data.load_word2vec(embedding_file, vocab_processor.vocabulary_, embedding_dim, tf_VP=True)
 
 # Embed the data with the extracted embeddings
 x_train = np.array([np.mean([embeddings[idx] for idx in sentence], axis=0) for sentence in x_train])
@@ -93,4 +72,4 @@ classifier = LinearSVC().fit(x_train, y_train)
 predicted = classifier.predict(x_test)
 accuracy = np.mean(predicted == y_test)
 
-print("Accuracy: {}".format(accuracy))
+print("Accuracy: {:.4f}".format(accuracy))
